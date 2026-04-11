@@ -3,21 +3,26 @@
 export const dynamic = 'force-dynamic'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { toast } from 'sonner'
-import { supabase } from '@/lib/supabase'
+import { supabase, type Listing } from '@/lib/supabase'
 import { Navbar } from '@/components/Navbar'
 
-export default function CreateListingPage() {
+export default function EditListingPage() {
   const router = useRouter()
+  const params = useParams()
   const [loading, setLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState('')
   const [user, setUser] = useState<any>(null)
-  const [images, setImages] = useState<File[]>([])
-  const [previews, setPreviews] = useState<string[]>([])
+  
+  const [originalImages, setOriginalImages] = useState<string[]>([])
+  const [existingImages, setExistingImages] = useState<string[]>([])
+  const [newImages, setNewImages] = useState<File[]>([])
+  const [newPreviews, setNewPreviews] = useState<string[]>([])
 
   const [formData, setFormData] = useState({
     type: 'sale',
@@ -34,34 +39,75 @@ export default function CreateListingPage() {
   })
 
   useEffect(() => {
-    const checkAuth = async () => {
-      const { data } = await supabase.auth.getSession()
+    const fetchData = async () => {
+      const { data: authData } = await supabase.auth.getSession()
 
-      if (!data.session) {
+      if (!authData.session) {
         router.push('/auth/login')
         return
       }
 
-      setUser(data.session.user)
+      setUser(authData.session.user)
+
+      // Fetch existing listing
+      const { data: listingData, error: fetchError } = await supabase
+        .from('listings')
+        .select('*')
+        .eq('id', params.id)
+        .single()
+
+      if (fetchError || !listingData) {
+        setError('Listing not found')
+        setLoading(false)
+        return
+      }
+
+      // Check ownership
+      if (listingData.user_id !== authData.session.user.id) {
+        setError('You do not have permission to edit this listing')
+        setLoading(false)
+        return
+      }
+
+      const listing = listingData as Listing
+      setFormData({
+        type: listing.type,
+        title: listing.title,
+        brand: listing.brand,
+        model: listing.model,
+        year: listing.year || new Date().getFullYear(),
+        mileage: listing.mileage?.toString() || '',
+        color: listing.color || '',
+        location: listing.location || '',
+        description: listing.description || '',
+        price: listing.price?.toString() || '',
+        price_per_day: listing.price_per_day?.toString() || '',
+      })
+      setOriginalImages(listing.images || [])
+      setExistingImages(listing.images || [])
       setLoading(false)
     }
 
-    checkAuth()
-  }, [router])
+    fetchData()
+  }, [params.id, router])
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || [])
     if (files.length === 0) return
 
-    setImages((prev) => [...prev, ...files])
+    setNewImages((prev) => [...prev, ...files])
 
-    const newPreviews = files.map((file) => URL.createObjectURL(file))
-    setPreviews((prev) => [...prev, ...newPreviews])
+    const previews = files.map((file) => URL.createObjectURL(file))
+    setNewPreviews((prev) => [...prev, ...previews])
   }
 
-  const removeImage = (index: number) => {
-    setImages((prev) => prev.filter((_, i) => i !== index))
-    setPreviews((prev) => prev.filter((_, i) => {
+  const removeExistingImage = (index: number) => {
+    setExistingImages((prev) => prev.filter((_, i) => i !== index))
+  }
+
+  const removeNewImage = (index: number) => {
+    setNewImages((prev) => prev.filter((_, i) => i !== index))
+    setNewPreviews((prev) => prev.filter((_, i) => {
       if (i === index) URL.revokeObjectURL(prev[i])
       return i !== index
     }))
@@ -72,8 +118,8 @@ export default function CreateListingPage() {
     setIsSubmitting(true)
 
     try {
-      // 1. Upload Images in parallel
-      const uploadPromises = images.map(async (image) => {
+      // 1. Upload New Images in parallel
+      const uploadPromises = newImages.map(async (image) => {
         const fileExt = image.name.split('.').pop()
         const fileName = `${crypto.randomUUID()}.${fileExt}`
         const filePath = `${user.id}/${fileName}`
@@ -91,33 +137,49 @@ export default function CreateListingPage() {
         return publicUrl
       })
 
-      const imageUrls = await Promise.all(uploadPromises)
+      const uploadedUrls = await Promise.all(uploadPromises)
 
-      // 2. Create Listing
-      const { error: insertError } = await supabase.from('listings').insert({
-        user_id: user.id,
-        type: formData.type,
-        title: formData.title,
-        brand: formData.brand,
-        model: formData.model,
-        year: formData.year ? parseInt(String(formData.year)) : null,
-        mileage: formData.mileage ? parseInt(String(formData.mileage)) : null,
-        color: formData.color,
-        location: formData.location,
-        description: formData.description,
-        price: formData.type === 'sale' && formData.price ? parseFloat(String(formData.price)) : null,
-        price_per_day: formData.type === 'rent' && formData.price_per_day ? parseFloat(String(formData.price_per_day)) : null,
-        status: 'available',
-        images: imageUrls,
-        specs: {},
-      })
+      // 2. Cleanup orphaned images (prevent bucket leaks)
+      const deletedImages = originalImages.filter(url => !existingImages.includes(url))
+      if (deletedImages.length > 0) {
+        const pathsToDelete = deletedImages.map(url => {
+          const pathParts = url.split('/listings/')
+          return pathParts.length > 1 ? pathParts[1] : null
+        }).filter(Boolean) as string[]
+        
+        if (pathsToDelete.length > 0) {
+          const { error: removeError } = await supabase.storage.from('listings').remove(pathsToDelete)
+          if (removeError) console.error("Failed to delete orphaned images:", removeError)
+        }
+      }
 
-      if (insertError) throw insertError
+      // 3. Update Listing
+      const allImages = [...existingImages, ...uploadedUrls]
 
-      toast.success('Listing created successfully!')
-      router.push('/dashboard')
+      const { error: updateError } = await supabase
+        .from('listings')
+        .update({
+          type: formData.type,
+          title: formData.title,
+          brand: formData.brand,
+          model: formData.model,
+          year: formData.year ? parseInt(String(formData.year)) : null,
+          mileage: formData.mileage ? parseInt(String(formData.mileage)) : null,
+          color: formData.color,
+          location: formData.location,
+          description: formData.description,
+          price: formData.type === 'sale' && formData.price ? parseFloat(String(formData.price)) : null,
+          price_per_day: formData.type === 'rent' && formData.price_per_day ? parseFloat(String(formData.price_per_day)) : null,
+          images: allImages,
+        })
+        .eq('id', params.id)
+
+      if (updateError) throw updateError
+
+      toast.success('Listing updated successfully!')
+      router.push(`/listings/${params.id}`)
     } catch (err: any) {
-      toast.error(err.message || 'Failed to create listing')
+      toast.error(err.message || 'Failed to update listing')
       setIsSubmitting(false)
     }
   }
@@ -126,14 +188,23 @@ export default function CreateListingPage() {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>
   }
 
+  if (error) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center space-y-4">
+        <p className="text-destructive font-medium">{error}</p>
+        <Button onClick={() => router.push('/dashboard')}>Back to Dashboard</Button>
+      </div>
+    )
+  }
+
   return (
     <main className="min-h-screen bg-background">
       <Navbar user={user} />
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl font-serif">Create New Listing</CardTitle>
-            <CardDescription>List your vehicle for sale or rent</CardDescription>
+            <CardTitle className="text-2xl font-serif">Edit Listing</CardTitle>
+            <CardDescription>Update your vehicle information</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -162,18 +233,35 @@ export default function CreateListingPage() {
               <div className="space-y-3">
                 <label className="text-sm font-medium">Vehicle Images</label>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                  {previews.map((preview, i) => (
-                    <div key={i} className="relative aspect-video rounded-lg overflow-hidden border border-border group">
-                      <img src={preview} alt="Preview" className="w-full h-full object-cover" />
+                  {/* Existing Images */}
+                  {existingImages.map((url, i) => (
+                    <div key={`existing-${i}`} className="relative aspect-video rounded-lg overflow-hidden border border-border group">
+                      <img src={url} alt="Existing" className="w-full h-full object-cover" />
                       <button
                         type="button"
-                        onClick={() => removeImage(i)}
+                        onClick={() => removeExistingImage(i)}
                         className="absolute top-2 right-2 p-1 bg-destructive text-destructive-foreground rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
                       </button>
                     </div>
                   ))}
+                  
+                  {/* New Image Previews */}
+                  {newPreviews.map((preview, i) => (
+                    <div key={`new-${i}`} className="relative aspect-video rounded-lg overflow-hidden border border-primary/30 group">
+                      <img src={preview} alt="New Preview" className="w-full h-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => removeNewImage(i)}
+                        className="absolute top-2 right-2 p-1 bg-destructive text-destructive-foreground rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                      </button>
+                      <div className="absolute bottom-0 left-0 right-0 bg-primary/80 text-[10px] text-white text-center py-0.5">New</div>
+                    </div>
+                  ))}
+                  
                   <label className="flex flex-col items-center justify-center aspect-video rounded-lg border-2 border-dashed border-muted hover:border-primary transition-colors cursor-pointer text-muted-foreground hover:text-primary">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mb-2"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
                     <span className="text-xs font-medium">Add Photo</span>
@@ -309,7 +397,7 @@ export default function CreateListingPage() {
                   Cancel
                 </Button>
                 <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? 'Creating...' : 'Create Listing'}
+                  {isSubmitting ? 'Saving...' : 'Save Changes'}
                 </Button>
               </div>
             </form>

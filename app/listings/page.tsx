@@ -5,21 +5,43 @@ import { useEffect, useState } from 'react'
 export const dynamic = 'force-dynamic'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent } from '@/components/ui/card'
 import { supabase, type Listing } from '@/lib/supabase'
+import { Navbar } from '@/components/Navbar'
+import { LoadingPage } from '@/components/ui/loading-page'
 
 export default function ListingsPage() {
   const searchParams = useSearchParams()
   const [listings, setListings] = useState<Listing[]>([])
+  const [user, setUser] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
+  const [debouncedSearch, setDebouncedSearch] = useState('')
   const [type, setType] = useState(searchParams.get('type') || 'sale')
   const [minPrice, setMinPrice] = useState('')
   const [maxPrice, setMaxPrice] = useState('')
 
   useEffect(() => {
+    const checkAuth = async () => {
+      const { data } = await supabase.auth.getSession()
+      setUser(data.session?.user || null)
+    }
+    checkAuth()
+  }, [])
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(search)
+    }, 400)
+    return () => clearTimeout(handler)
+  }, [search])
+
+  useEffect(() => {
+    let ignore = false
+
     const fetchListings = async () => {
       setLoading(true)
       let query = supabase
@@ -27,35 +49,60 @@ export default function ListingsPage() {
         .select('*')
         .eq('status', 'available')
         .eq('type', type)
-        .order('created_at', { ascending: false })
 
-      if (search) {
+      if (debouncedSearch) {
         query = query.or(
-          `title.ilike.%${search}%,brand.ilike.%${search}%,model.ilike.%${search}%,location.ilike.%${search}%`
+          `title.ilike.%${debouncedSearch}%,brand.ilike.%${debouncedSearch}%,model.ilike.%${debouncedSearch}%,location.ilike.%${debouncedSearch}%`
         )
       }
 
       if (minPrice) {
-        query = query.gte(type === 'sale' ? 'price' : 'price_per_day', parseFloat(minPrice))
+        const minVal = parseFloat(minPrice)
+        if (!isNaN(minVal)) {
+          query = query.gte(type === 'sale' ? 'price' : 'price_per_day', minVal)
+        }
       }
 
       if (maxPrice) {
-        query = query.lte(type === 'sale' ? 'price' : 'price_per_day', parseFloat(maxPrice))
+        const maxVal = parseFloat(maxPrice)
+        if (!isNaN(maxVal)) {
+          query = query.lte(type === 'sale' ? 'price' : 'price_per_day', maxVal)
+        }
       }
 
-      const { data } = await query
-      setListings(data || [])
-      setLoading(false)
+      query = query.order('created_at', { ascending: false })
+
+      const { data, error } = await query
+      
+      if (!ignore) {
+        if (error) {
+          console.error("Error fetching listings:", error)
+          setListings([])
+        } else {
+          setListings(data || [])
+        }
+        setLoading(false)
+      }
     }
 
     fetchListings()
-  }, [search, type, minPrice, maxPrice])
+
+    return () => {
+      ignore = true
+    }
+  }, [debouncedSearch, type, minPrice, maxPrice])
+
+  if (loading) {
+    return <LoadingPage />
+  }
 
   return (
     <main className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="border-b border-border bg-card">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <Navbar user={user} />
+
+      {/* Page Header */}
+      <div className="border-b border-border bg-card/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-serif font-bold text-foreground">
@@ -131,9 +178,7 @@ export default function ListingsPage() {
             </div>
 
             {loading ? (
-              <div className="flex items-center justify-center h-96">
-                <p className="text-muted-foreground">Loading listings...</p>
-              </div>
+              <ListingGridSkeleton count={4} />
             ) : listings.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-96 text-center">
                 <p className="text-muted-foreground mb-4">No listings found</p>
@@ -146,8 +191,12 @@ export default function ListingsPage() {
                 {listings.map((listing) => (
                   <Link key={listing.id} href={`/listings/${listing.id}`}>
                     <Card className="h-full hover:shadow-lg hover:border-primary/50 transition-all cursor-pointer">
-                      <div className="aspect-video bg-secondary/20 rounded-t-lg flex items-center justify-center">
-                        <p className="text-muted-foreground">Image Gallery</p>
+                      <div className="aspect-video bg-secondary/20 rounded-t-lg flex items-center justify-center overflow-hidden relative">
+                        {listing.images && listing.images.length > 0 ? (
+                          <Image src={listing.images[0]} alt={listing.title} fill className="object-cover" />
+                        ) : (
+                          <p className="text-muted-foreground text-xs">No Image</p>
+                        )}
                       </div>
                       <CardContent className="p-4 space-y-3">
                         <div>

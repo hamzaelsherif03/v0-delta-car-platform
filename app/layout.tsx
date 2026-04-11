@@ -30,6 +30,10 @@ export const metadata: Metadata = {
   },
 }
 
+import { Toaster } from '@/components/ui/sonner'
+import { ProgressBar } from '@/components/ui/progress-bar'
+import { Suspense } from 'react'
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -38,7 +42,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="font-sans antialiased">
+        <Suspense fallback={null}>
+          <ProgressBar />
+        </Suspense>
         {children}
+        <Toaster />
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>

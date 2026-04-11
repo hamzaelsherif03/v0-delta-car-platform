@@ -1,15 +1,17 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { supabase } from '@/lib/supabase'
+import { LoadingPage } from '@/components/ui/loading-page'
 
-export default function SignUpPage() {
+function SignUpForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [fullName, setFullName] = useState('')
@@ -50,7 +52,8 @@ export default function SignUpPage() {
         setError(profileError.message)
         setLoading(false)
       } else {
-        router.push('/dashboard')
+        const nextUrl = searchParams.get('next') || '/dashboard'
+        window.location.href = nextUrl
       }
     }
   }
@@ -105,12 +108,23 @@ export default function SignUpPage() {
           </form>
           <p className="text-sm text-muted-foreground mt-6 text-center">
             Already have an account?{' '}
-            <Link href="/auth/login" className="text-primary hover:underline font-medium">
+            <Link 
+              href={`/auth/login${searchParams.get('next') ? `?next=${searchParams.get('next')}` : ''}`} 
+              className="text-primary hover:underline font-medium"
+            >
               Sign in
             </Link>
           </p>
         </CardContent>
       </Card>
     </main>
+  )
+}
+
+export default function SignUpPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-background flex items-center justify-center">Loading...</div>}>
+      <SignUpForm />
+    </Suspense>
   )
 }

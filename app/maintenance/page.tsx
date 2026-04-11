@@ -8,6 +8,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { supabase, type MaintenanceRequest } from '@/lib/supabase'
+import { LoadingPage } from '@/components/ui/loading-page'
 
 export default function MaintenancePage() {
   const router = useRouter()
@@ -45,7 +46,7 @@ export default function MaintenancePage() {
   }, [router, filter])
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>
+    return <LoadingPage message="Initializing services..." />
   }
 
   return (

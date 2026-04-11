@@ -5,9 +5,23 @@ export const dynamic = 'force-dynamic'
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import { toast } from "sonner"
 import { supabase, type Listing, type User } from '@/lib/supabase'
+import { Navbar } from '@/components/Navbar'
 
 export default function ListingDetailPage() {
   const params = useParams()
@@ -16,7 +30,9 @@ export default function ListingDetailPage() {
   const [seller, setSeller] = useState<User | null>(null)
   const [isFavorite, setIsFavorite] = useState(false)
   const [currentUser, setCurrentUser] = useState<any>(null)
+  const [isOwner, setIsOwner] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [isDeleting, setIsDeleting] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -31,6 +47,7 @@ export default function ListingDetailPage() {
 
       if (listingData) {
         setListing(listingData as Listing)
+        setIsOwner(authData.session?.user.id === listingData.user_id)
 
         const { data: sellerData } = await supabase
           .from('users')
@@ -59,7 +76,7 @@ export default function ListingDetailPage() {
 
   const toggleFavorite = async () => {
     if (!currentUser) {
-      router.push('/auth/login')
+      router.push(`/auth/login?next=/listings/${params.id}`)
       return
     }
 
@@ -77,6 +94,38 @@ export default function ListingDetailPage() {
     }
 
     setIsFavorite(!isFavorite)
+  }
+
+  const handleDelete = async () => {
+    setIsDeleting(true)
+    try {
+      // 1. Delete images from storage explicitly to prevent bucket leaks
+      if (listing.images && listing.images.length > 0) {
+        const pathsToDelete = listing.images.map(url => {
+          const pathParts = url.split('/listings/')
+          return pathParts.length > 1 ? pathParts[1] : null
+        }).filter(Boolean) as string[]
+        
+        if (pathsToDelete.length > 0) {
+          const { error: storageError } = await supabase.storage.from('listings').remove(pathsToDelete)
+          if (storageError) console.error("Failed to delete images from storage:", storageError)
+        }
+      }
+
+      // 2. Delete database record
+      const { error: deleteError } = await supabase
+        .from('listings')
+        .delete()
+        .eq('id', params.id)
+
+      if (deleteError) throw deleteError
+
+      toast.success('Listing deleted successfully')
+      router.push('/dashboard')
+    } catch (err: any) {
+      toast.error('Error deleting listing: ' + err.message)
+      setIsDeleting(false)
+    }
   }
 
   if (loading) {
@@ -98,6 +147,7 @@ export default function ListingDetailPage() {
 
   return (
     <main className="min-h-screen bg-background">
+      <Navbar user={currentUser} />
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Back Button */}
         <Button variant="ghost" asChild className="mb-6">
@@ -108,8 +158,23 @@ export default function ListingDetailPage() {
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
             {/* Image Gallery */}
-            <div className="aspect-video bg-secondary/20 rounded-lg flex items-center justify-center">
-              <p className="text-muted-foreground">Image Gallery Placeholder</p>
+            <div className="space-y-4">
+              <div className="aspect-video bg-secondary/20 rounded-lg flex items-center justify-center overflow-hidden border border-border relative">
+                {listing.images && listing.images.length > 0 ? (
+                  <Image src={listing.images[0]} alt={listing.title} fill className="object-cover" />
+                ) : (
+                  <p className="text-muted-foreground">No images available</p>
+                )}
+              </div>
+              {listing.images && listing.images.length > 1 && (
+                <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
+                  {listing.images.map((img, i) => (
+                    <div key={i} className="aspect-video rounded-md overflow-hidden border border-border relative group cursor-pointer">
+                      <Image src={img} alt={`${listing.title} ${i + 1}`} fill className="object-cover group-hover:scale-110 transition-transform" />
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Details */}
@@ -197,8 +262,18 @@ export default function ListingDetailPage() {
                       : `$${listing.price_per_day}/day`}
                   </p>
                 </div>
-                <Button size="lg" className="w-full">
-                  {listing.type === 'sale' ? 'Contact Seller' : 'Book Now'}
+                <Button size="lg" className="w-full" asChild disabled={!seller?.phone}>
+                  {seller?.phone ? (
+                    <a 
+                      href={`https://wa.me/${seller.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hi ${seller.full_name || 'there'}, I'm interested in your ${listing.brand} ${listing.model} listed on Delta Car.`)}`}
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                    >
+                      {listing.type === 'sale' ? 'WhatsApp Seller' : 'WhatsApp to Book'}
+                    </a>
+                  ) : (
+                    <span>Phone Unavailable</span>
+                  )}
                 </Button>
               </CardContent>
             </Card>
@@ -207,35 +282,87 @@ export default function ListingDetailPage() {
             {seller && (
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg font-serif">Seller Information</CardTitle>
+                  <CardTitle className="text-lg font-serif">
+                    {isOwner ? 'Your Listing' : 'Seller Information'}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div>
-                    <p className="text-xs text-muted-foreground">Name</p>
-                    <p className="font-semibold text-foreground">
-                      {seller.full_name || 'Anonymous'}
-                    </p>
-                  </div>
-                  {seller.city && (
-                    <div>
-                      <p className="text-xs text-muted-foreground">Location</p>
-                      <p className="font-semibold text-foreground">{seller.city}</p>
+                  {isOwner ? (
+                    <div className="space-y-3">
+                      <p className="text-sm text-muted-foreground">
+                        You are the owner of this listing.
+                      </p>
+                      <div className="grid grid-cols-2 gap-2">
+                        <Button asChild className="w-full">
+                          <Link href={`/listings/${params.id}/edit`}>Edit</Link>
+                        </Button>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button 
+                              variant="destructive" 
+                              className="w-full"
+                              disabled={isDeleting}
+                            >
+                              {isDeleting ? 'Deleting...' : 'Delete'}
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This action cannot be undone. This will permanently delete your listing and remove your vehicle images from our servers.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                                Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
                     </div>
+                  ) : (
+                    <>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Name</p>
+                        <p className="font-semibold text-foreground">
+                          {seller.full_name || 'Anonymous'}
+                        </p>
+                      </div>
+                      {seller.city && (
+                        <div>
+                          <p className="text-xs text-muted-foreground">Location</p>
+                          <p className="font-semibold text-foreground">{seller.city}</p>
+                        </div>
+                      )}
+                      {seller.phone && (
+                        <div>
+                          <p className="text-xs text-muted-foreground">Phone</p>
+                          <a
+                            href={`tel:${seller.phone}`}
+                            className="font-semibold text-primary hover:underline"
+                          >
+                            {seller.phone}
+                          </a>
+                        </div>
+                      )}
+                      <Button variant="outline" className="w-full bg-green-50 text-green-700 hover:bg-green-100 border-green-200" asChild disabled={!seller.phone}>
+                        {seller.phone ? (
+                          <a 
+                            href={`https://wa.me/${seller.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hi ${seller.full_name || 'there'}, I'm interested in your ${listing.brand} ${listing.model} listed on Delta Car.`)}`}
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            Chat on WhatsApp
+                          </a>
+                        ) : (
+                          <span>Chat on WhatsApp</span>
+                        )}
+                      </Button>
+                    </>
                   )}
-                  {seller.phone && (
-                    <div>
-                      <p className="text-xs text-muted-foreground">Phone</p>
-                      <a
-                        href={`tel:${seller.phone}`}
-                        className="font-semibold text-primary hover:underline"
-                      >
-                        {seller.phone}
-                      </a>
-                    </div>
-                  )}
-                  <Button variant="outline" className="w-full">
-                    Contact Seller
-                  </Button>
                 </CardContent>
               </Card>
             )}

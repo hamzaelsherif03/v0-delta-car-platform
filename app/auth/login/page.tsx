@@ -1,15 +1,17 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { supabase } from '@/lib/supabase'
+import { LoadingPage } from '@/components/ui/loading-page'
 
 export default function LoginPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -29,8 +31,13 @@ export default function LoginPage() {
       setError(signInError.message)
       setLoading(false)
     } else {
-      router.push('/dashboard')
+      const nextUrl = searchParams.get('next') || '/dashboard'
+      router.push(nextUrl)
     }
+  }
+
+  if (loading) {
+    return <LoadingPage message="Verifying credentials..." />
   }
 
   return (

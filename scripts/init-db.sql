@@ -93,3 +93,34 @@ CREATE POLICY "Users can update their own maintenance requests" ON public.mainte
 CREATE POLICY "Users can view their own favorites" ON public.favorites FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "Users can add favorites" ON public.favorites FOR INSERT WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "Users can remove their own favorites" ON public.favorites FOR DELETE USING (auth.uid() = user_id);
+
+-- Storage bucket for listings
+INSERT INTO storage.buckets (id, name, public) 
+VALUES ('listings', 'listings', true)
+ON CONFLICT (id) DO NOTHING;
+
+-- Storage policies for listings bucket
+CREATE POLICY "Public Access" 
+ON storage.objects FOR SELECT 
+USING ( bucket_id = 'listings' );
+
+CREATE POLICY "Authenticated users can upload" 
+ON storage.objects FOR INSERT 
+WITH CHECK ( 
+  bucket_id = 'listings' 
+  AND auth.role() = 'authenticated' 
+);
+
+CREATE POLICY "Users can update their own uploads" 
+ON storage.objects FOR UPDATE 
+USING ( 
+  bucket_id = 'listings' 
+  AND auth.uid() = owner 
+);
+
+CREATE POLICY "Users can delete their own uploads" 
+ON storage.objects FOR DELETE 
+USING ( 
+  bucket_id = 'listings' 
+  AND auth.uid() = owner 
+);
