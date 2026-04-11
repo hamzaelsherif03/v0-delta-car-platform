@@ -1,14 +1,15 @@
 import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
+import { Geist, Geist_Mono, Merriweather } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 
 const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
+const _merriweather = Merriweather({ weight: ['400', '700'], subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
+  title: 'Delta Car - Buy, Sell & Rent Vehicles',
+  description: 'Premium vehicle marketplace for buying, selling, renting, and maintenance services',
   generator: 'v0.app',
   icons: {
     icon: [
