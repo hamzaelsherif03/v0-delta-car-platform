@@ -76,7 +76,7 @@ function SignUpForm() {
               <label className="text-sm font-medium">Full Name</label>
               <Input
                 type="text"
-                placeholder="John Doe"
+                placeholder="Amr Mostafa"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 disabled={loading}

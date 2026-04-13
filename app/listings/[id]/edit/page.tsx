@@ -357,7 +357,7 @@ export default function EditListingPage() {
               {/* Price */}
               <div className="space-y-2">
                 <label className="text-sm font-medium">
-                  {formData.type === 'sale' ? 'Price ($)' : 'Daily Rate ($)'}
+                  {formData.type === 'sale' ? 'Price (EGP)' : 'Daily Rate (EGP)'}
                 </label>
                 <Input
                   type="number"

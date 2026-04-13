@@ -135,7 +135,7 @@ export default function AdminListingsPage() {
                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
                       <span className="capitalize">{listing.type}</span>
                       <span>•</span>
-                      <span>${listing.price?.toLocaleString() || listing.price_per_day + '/day'}</span>
+                      <span>{listing.price ? `${listing.price.toLocaleString()} EGP` : `${listing.price_per_day} EGP/day`}</span>
                       <span>•</span>
                       <span className="font-medium text-foreground">{listing.users?.email}</span>
                     </div>

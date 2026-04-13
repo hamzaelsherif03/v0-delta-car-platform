@@ -158,7 +158,7 @@ export default function DashboardPage() {
                           {fav.listings?.brand} {fav.listings?.model}
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          ${fav.listings?.price?.toLocaleString() || fav.listings?.price_per_day + '/day'}
+                          {fav.listings?.price ? `${fav.listings.price.toLocaleString()} EGP` : `${fav.listings?.price_per_day} EGP/day`}
                         </p>
                       </div>
                       <Link href={`/listings/${fav.listings?.id}`}>
@@ -206,7 +206,7 @@ export default function DashboardPage() {
                           {rental.brand} {rental.model}
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          ${rental.price_per_day}/day
+                          {rental.price_per_day} EGP/day
                         </p>
                       </div>
                       <Link href={`/listings/${rental.id}`}>

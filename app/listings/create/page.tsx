@@ -34,6 +34,7 @@ export default function CreateListingPage() {
     price: '',
     price_per_day: '',
     category: '',
+    phone: '',
   })
 
   useEffect(() => {
@@ -46,6 +47,18 @@ export default function CreateListingPage() {
       }
 
       setUser(data.session.user)
+
+      // Fetch existing phone from profile
+      const { data: userData } = await supabase
+        .from('users')
+        .select('phone')
+        .eq('id', data.session.user.id)
+        .single()
+
+      if (userData?.phone) {
+        setFormData(prev => ({ ...prev, phone: userData.phone }))
+      }
+
       setLoading(false)
     }
 
@@ -117,6 +130,18 @@ export default function CreateListingPage() {
       })
 
       if (insertError) throw insertError
+
+      // 3. Update user profile phone number
+      const { error: profileError } = await supabase
+        .from('users')
+        .update({ phone: formData.phone })
+        .eq('id', user.id)
+
+      if (profileError) {
+        console.error('Failed to update profile phone:', profileError)
+        // We don't throw here as the listing is already created, 
+        // but we might want to warn the user
+      }
 
       toast.success('Listing created successfully!')
       router.push('/dashboard')
@@ -204,6 +229,24 @@ export default function CreateListingPage() {
                 />
               </div>
 
+              {/* Contact Information */}
+              <div className="space-y-4 p-4 bg-primary/5 rounded-lg border border-primary/10">
+                <h3 className="text-sm font-bold font-serif text-primary uppercase tracking-wider">Contact Information</h3>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Phone Number (WhatsApp Contact)</label>
+                  <Input
+                    type="tel"
+                    placeholder="e.g., +1 234 567 8900"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    required
+                  />
+                  <p className="text-[10px] text-muted-foreground italic">
+                    Note: This will update your profile and be used for WhatsApp inquiries.
+                  </p>
+                </div>
+              </div>
+
               {/* Vehicle Details Grid */}
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -287,7 +330,7 @@ export default function CreateListingPage() {
               {/* Price */}
               <div className="space-y-2">
                 <label className="text-sm font-medium">
-                  {formData.type === 'sale' ? 'Price ($)' : 'Daily Rate ($)'}
+                  {formData.type === 'sale' ? 'Price (EGP)' : 'Daily Rate (EGP)'}
                 </label>
                 <Input
                   type="number"

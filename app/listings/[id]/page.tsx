@@ -258,14 +258,14 @@ export default function ListingDetailPage() {
                   </p>
                   <p className="text-4xl font-serif font-bold text-primary">
                     {listing.type === 'sale'
-                      ? `$${listing.price?.toLocaleString()}`
-                      : `$${listing.price_per_day}/day`}
+                      ? `${listing.price?.toLocaleString()} EGP`
+                      : `${listing.price_per_day} EGP/day`}
                   </p>
                 </div>
                 <Button size="lg" className="w-full" asChild disabled={!seller?.phone}>
                   {seller?.phone ? (
                     <a 
-                      href={`https://wa.me/${seller.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hi ${seller.full_name || 'there'}, I'm interested in your ${listing.brand} ${listing.model} listed on Delta Car.`)}`}
+                      href={`https://wa.me/${seller.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hi ${seller.full_name || 'there'}, I'm interested in your ${listing.year} ${listing.brand} ${listing.model} listed on Delta Car. Is it still available?`)}`}
                       target="_blank" 
                       rel="noopener noreferrer"
                     >

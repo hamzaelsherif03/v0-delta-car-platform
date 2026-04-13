@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 
 export const dynamic = 'force-dynamic'
 import { useSearchParams } from 'next/navigation'
@@ -47,6 +47,8 @@ export default function ListingsPage() {
 
     const fetchListings = async () => {
       setIsSearching(true)
+      console.log(`[FetchListings] type: ${type}, category: "${category}", search: "${debouncedSearch}"`)
+
       let query = supabase
         .from('listings')
         .select('*')
@@ -80,19 +82,17 @@ export default function ListingsPage() {
       query = query.order('created_at', { ascending: false })
 
       const { data, error: fetchError } = await query
-      
+
       if (!ignore) {
         if (fetchError) {
-          console.error("Supabase Error Details:", {
-            message: fetchError.message,
-            details: fetchError.details,
-            hint: fetchError.hint,
-            code: fetchError.code
-          })
+          console.error("Supabase Error Details:", JSON.stringify(fetchError, Object.getOwnPropertyNames(fetchError), 2))
 
           // Graceful fallback: If category column is missing, try a keyword search for the category instead
-          if (fetchError.code === 'PGRST204' || fetchError.message.includes('column "category" does not exist')) {
-            console.warn("Category column missing. Falling back to keyword-based discovery...")
+          const isColumnMissing = fetchError.code === 'PGRST204' ||
+            (fetchError.message && fetchError.message.includes('column "category" does not exist'))
+
+          if (isColumnMissing && category) {
+            console.warn(`Category column missing. Falling back to keyword-based discovery for: ${category}`)
             let fallbackQuery = supabase
               .from('listings')
               .select('*')
@@ -100,12 +100,13 @@ export default function ListingsPage() {
               .eq('type', type)
               .or(`title.ilike.%${category}%,description.ilike.%${category}%,brand.ilike.%${category}%`)
               .order('created_at', { ascending: false })
-            
+
             const { data: fallbackData, error: secondError } = await fallbackQuery
             if (secondError) {
-               setListings([])
+              console.error("Fallback Failed:", secondError)
+              setListings([])
             } else {
-               setListings(fallbackData || [])
+              setListings(fallbackData || [])
             }
           } else {
             setListings([])
@@ -123,12 +124,64 @@ export default function ListingsPage() {
     return () => {
       ignore = true
     }
-  }, [debouncedSearch, type, minPrice, maxPrice])
+  }, [debouncedSearch, type, category, minPrice, maxPrice])
 
   if (isInitialLoading) {
     return <LoadingPage />
   }
 
+  return (
+    <Suspense fallback={<LoadingPage />}>
+      <ListingsContent
+        listings={listings}
+        user={user}
+        isSearching={isSearching}
+        type={type}
+        setType={setType}
+        category={category}
+        setCategory={setCategory}
+        search={search}
+        setSearch={setSearch}
+        minPrice={minPrice}
+        setMinPrice={setMinPrice}
+        maxPrice={maxPrice}
+        setMaxPrice={setMaxPrice}
+      />
+    </Suspense>
+  )
+}
+
+interface ListingsContentProps {
+  listings: Listing[]
+  user: any
+  isSearching: boolean
+  type: string
+  setType: (t: string) => void
+  category: string
+  setCategory: (c: string) => void
+  search: string
+  setSearch: (s: string) => void
+  minPrice: string
+  setMinPrice: (p: string) => void
+  maxPrice: string
+  setMaxPrice: (p: string) => void
+}
+
+function ListingsContent({
+  listings,
+  user,
+  isSearching,
+  type,
+  setType,
+  category,
+  setCategory,
+  search,
+  setSearch,
+  minPrice,
+  setMinPrice,
+  maxPrice,
+  setMaxPrice
+}: ListingsContentProps) {
   return (
     <main className="min-h-screen bg-background">
       <Navbar user={user} />
@@ -145,11 +198,11 @@ export default function ListingsPage() {
                 {category && (
                   <div className="flex items-center gap-2 bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium border border-primary/20">
                     {category}
-                    <button 
+                    <button
                       onClick={() => setCategory('')}
                       className="hover:text-primary/70 transition-colors ml-1"
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
                     </button>
                   </div>
                 )}
@@ -164,9 +217,7 @@ export default function ListingsPage() {
                 {listings.length} listing{listings.length !== 1 ? 's' : ''} available
               </p>
             </div>
-            <Link href="/dashboard">
-              <Button variant="outline">My Dashboard</Button>
-            </Link>
+
           </div>
         </div>
       </div>
@@ -242,7 +293,7 @@ export default function ListingsPage() {
               <div className="grid md:grid-cols-2 gap-6">
                 {listings.map((listing) => (
                   <Link key={listing.id} href={`/listings/${listing.id}`}>
-                    <Card className="h-full hover:shadow-lg hover:border-primary/50 transition-all cursor-pointer">
+                    <Card className="h-full hover:shadow-xl hover:border-primary/50 transition-all duration-300 cursor-pointer">
                       <div className="aspect-video bg-secondary/20 rounded-t-lg flex items-center justify-center overflow-hidden relative">
                         {listing.images && listing.images.length > 0 ? (
                           <Image src={listing.images[0]} alt={listing.title} fill className="object-cover" />
@@ -270,8 +321,8 @@ export default function ListingsPage() {
                           </div>
                           <p className="text-lg font-serif font-bold text-primary">
                             {listing.type === 'sale'
-                              ? `$${listing.price?.toLocaleString()}`
-                              : `$${listing.price_per_day}/day`}
+                              ? `${listing.price?.toLocaleString()} EGP`
+                              : `${listing.price_per_day} EGP/day`}
                           </p>
                         </div>
                       </CardContent>
@@ -284,5 +335,29 @@ export default function ListingsPage() {
         </div>
       </div>
     </main>
+  )
+}
+
+function ListingGridSkeleton({ count = 6 }: { count?: number }) {
+  return (
+    <div className="grid md:grid-cols-2 gap-6">
+      {Array.from({ length: count }).map((_, i) => (
+        <div key={i} className="rounded-xl border border-border bg-card overflow-hidden h-[400px] animate-pulse">
+          <div className="aspect-video bg-muted" />
+          <div className="p-4 space-y-4">
+            <div className="h-6 w-2/3 bg-muted rounded" />
+            <div className="h-4 w-1/2 bg-muted rounded" />
+            <div className="space-y-2">
+              <div className="h-3 w-full bg-muted rounded" />
+              <div className="h-3 w-4/5 bg-muted rounded" />
+            </div>
+            <div className="pt-4 flex justify-between items-end">
+              <div className="h-4 w-1/3 bg-muted rounded" />
+              <div className="h-8 w-1/4 bg-muted rounded" />
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
   )
 }

@@ -57,12 +57,12 @@ export default function HomePage() {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div>
-            <h2 className="text-6xl font-serif font-bold text-foreground leading-tight mb-6">
-              Precision Engineering. <br />
-              <span className="text-primary italic">Ultimate Freedom.</span>
+            <h2 className="text-[3.375rem] font-serif font-bold text-foreground leading-tight mb-6">
+              Where Engineering <br />
+              <span className="text-primary italic">Meets Elegance.</span>
             </h2>
-            <p className="text-lg text-muted-foreground/90 mb-8 leading-relaxed max-w-lg font-light">
-              The premier ecosystem for vehicle acquisition, rental, and elite maintenance. Experience the Delta difference through a curated fleet of global excellence.
+            <p className="text-base text-muted-foreground/90 mb-8 leading-relaxed max-w-lg font-light">
+              Delta Car is more than a marketplace; it is an ecosystem of automotive passion. Discover an elite fleet of vehicles designed for those who demand a superior journey.
             </p>
             <div className="flex gap-4">
               <Link href="/listings?type=sale">
@@ -112,8 +112,8 @@ export default function HomePage() {
                         <div className="text-right">
                           <p className="text-3xl font-serif font-bold">
                             {listing.type === 'sale'
-                              ? `$${listing.price?.toLocaleString()}`
-                              : `$${listing.price_per_day}/day`}
+                              ? `${listing.price?.toLocaleString()} EGP`
+                              : `${listing.price_per_day} EGP/day`}
                           </p>
                           <span className="text-xs text-white/60">View Details →</span>
                         </div>
@@ -197,7 +197,7 @@ export default function HomePage() {
             { name: 'Vintage', image: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=2070&auto=format&fit=crop', count: '150+' },
             { name: 'Family', image: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?q=80&w=2070&auto=format&fit=crop', count: '2.1k' },
           ].map((cat, i) => (
-            <Link key={i} href={`/listings?category=${cat.name}`} className="group relative h-64 rounded-xl overflow-hidden border border-border shadow-sm">
+            <Link key={i} href={`/listings?category=${cat.name}`} className="group relative h-64 rounded-xl overflow-hidden border border-border shadow-sm hover:shadow-lg transition-all duration-300">
               <Image src={cat.image} alt={cat.name} fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
               <div className="absolute bottom-4 left-4 text-white">
@@ -293,17 +293,17 @@ export default function HomePage() {
             {[
               {
                 quote: "The inspection service gave me total peace of mind when buying my 911. The detail was unmatched.",
-                author: "Julian V.",
+                author: "Amr M.",
                 role: "Collector"
               },
               {
                 quote: "Sold my G-Wagon in 4 days. The reach of this platform is incredible compared to standard local listings.",
-                author: "Sarah K.",
+                author: "Noha S.",
                 role: "Private Seller"
               },
               {
                 quote: "Finally, a platform that understands what car enthusiasts actually need. The UI is a dream to use.",
-                author: "Marcus T.",
+                author: "Mostafa A.",
                 role: "Automotive Journalist"
               }
             ].map((t, i) => (

@@ -1,37 +1,22 @@
 import type { Metadata } from 'next'
-import { Geist, Geist_Mono, Merriweather } from 'next/font/google'
+import { Geist, Geist_Mono, Merriweather, Playfair_Display } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 
 const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 const _merriweather = Merriweather({ weight: ['400', '700'], subsets: ["latin"] });
+const _playfair = Playfair_Display({ subsets: ["latin"], variable: '--font-playfair' });
 
 export const metadata: Metadata = {
   title: 'Delta Car - Buy, Sell & Rent Vehicles',
   description: 'Premium vehicle marketplace for buying, selling, renting, and maintenance services',
   generator: 'v0.app',
-  icons: {
-    icon: [
-      {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
-      },
-    ],
-    apple: '/apple-icon.png',
-  },
 }
 
 import { Toaster } from '@/components/ui/sonner'
 import { ProgressBar } from '@/components/ui/progress-bar'
+import { Footer } from '@/components/Footer'
 import { Suspense } from 'react'
 
 export default function RootLayout({
@@ -41,11 +26,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="font-sans antialiased" suppressHydrationWarning>
+      <body className={`${_geist.className} ${_playfair.variable} antialiased`} suppressHydrationWarning>
         <Suspense fallback={null}>
           <ProgressBar />
         </Suspense>
         {children}
+        <Footer />
         <Toaster />
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>

@@ -183,7 +183,7 @@ export default function ProfileSettingsPage() {
                 <label className="text-sm font-medium">Full Name</label>
                 <Input
                   type="text"
-                  placeholder="John Doe"
+                  placeholder="Amr Mostafa"
                   value={formData.full_name}
                   onChange={(e) =>
                     setFormData({ ...formData, full_name: e.target.value })
@@ -211,7 +211,7 @@ export default function ProfileSettingsPage() {
                 <label className="text-sm font-medium">City</label>
                 <Input
                   type="text"
-                  placeholder="New York, NY"
+                  placeholder="Cairo, Egypt"
                   value={formData.city}
                   onChange={(e) =>
                     setFormData({ ...formData, city: e.target.value })

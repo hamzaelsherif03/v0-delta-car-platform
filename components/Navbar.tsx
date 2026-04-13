@@ -21,8 +21,13 @@ export function Navbar({ user, showDashboard = true }: NavbarProps) {
   return (
     <nav className="border-b border-border bg-card">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-        <Link href="/">
-          <h1 className="text-2xl font-serif font-bold text-primary cursor-pointer hover:opacity-80 transition-opacity">
+        <Link href="/" className="flex items-center gap-4 group py-2">
+          <img 
+            src="/logo.png" 
+            alt="Delta" 
+            className="h-14 w-auto object-contain transition-all duration-500 group-hover:scale-110 drop-shadow-sm" 
+          />
+          <h1 className="text-2xl font-playfair font-bold text-primary tracking-tight">
             Delta Car
           </h1>
         </Link>
