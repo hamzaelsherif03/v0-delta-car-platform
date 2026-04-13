@@ -9,6 +9,10 @@ import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { supabase } from '@/lib/supabase'
 
+import { LoadingPage } from '@/components/ui/loading-page'
+
+import { Navbar } from '@/components/Navbar'
+
 const SERVICE_TYPES = [
   'Oil Change',
   'Tire Replacement',
@@ -104,11 +108,12 @@ export default function MaintenanceRequestPage() {
   }
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>
+    return <LoadingPage />
   }
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className="min-h-screen bg-background text-foreground">
+      <Navbar user={user} />
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <Card>
           <CardHeader>
@@ -131,7 +136,7 @@ export default function MaintenanceRequestPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, service_type: e.target.value })
                   }
-                  className="w-full px-3 py-2 border border-input rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                  className="w-full px-3 py-2 border border-input rounded-md text-sm bg-background focus:outline-none focus:ring-2 focus:ring-ring"
                   required
                 >
                   <option value="">Select a service type</option>
@@ -153,7 +158,7 @@ export default function MaintenanceRequestPage() {
                     setFormData({ ...formData, description: e.target.value })
                   }
                   rows={4}
-                  className="w-full px-3 py-2 border border-input rounded-md text-sm resize-none focus:outline-none focus:ring-2 focus:ring-ring"
+                  className="w-full px-3 py-2 border border-input rounded-md text-sm resize-none bg-background focus:outline-none focus:ring-2 focus:ring-ring"
                 />
               </div>
 
@@ -206,8 +211,8 @@ export default function MaintenanceRequestPage() {
                 >
                   Cancel
                 </Button>
-                <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? 'Submitting...' : 'Submit Request'}
+                <Button type="submit" loading={isSubmitting}>
+                  Submit Request
                 </Button>
               </div>
             </form>

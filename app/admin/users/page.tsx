@@ -28,6 +28,7 @@ export default function AdminUsersPage() {
   const [users, setUsers] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
+  const [processingId, setProcessingId] = useState<string | null>(null)
 
   useEffect(() => {
     fetchUsers()
@@ -55,6 +56,7 @@ export default function AdminUsersPage() {
   }
 
   const handleRoleUpdate = async (id: string, newRole: string) => {
+    setProcessingId(id)
     try {
       const { error } = await supabase
         .from('users')
@@ -69,10 +71,13 @@ export default function AdminUsersPage() {
       )
     } catch (err: any) {
       toast.error(err.message || 'Failed to update role')
+    } finally {
+      setProcessingId(null)
     }
   }
 
   const handleDeleteUser = async (id: string) => {
+    setProcessingId(id)
     try {
       const { error } = await supabase
         .from('users')
@@ -85,6 +90,8 @@ export default function AdminUsersPage() {
       setUsers(current => current.filter(u => u.id !== id))
     } catch (err: any) {
       toast.error(err.message || 'Failed to delete user')
+    } finally {
+      setProcessingId(null)
     }
   }
 
@@ -132,6 +139,7 @@ export default function AdminUsersPage() {
                   <div className="w-32">
                     <Select
                       defaultValue={user.role}
+                      disabled={processingId === user.id}
                       onValueChange={(val) => handleRoleUpdate(user.id, val)}
                     >
                       <SelectTrigger>
@@ -148,7 +156,12 @@ export default function AdminUsersPage() {
 
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
-                      <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive hover:bg-destructive/10">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                        loading={processingId === user.id}
+                      >
                         <UserRoundX className="h-4 w-4" />
                       </Button>
                     </AlertDialogTrigger>

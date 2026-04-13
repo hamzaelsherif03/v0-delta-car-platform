@@ -17,7 +17,7 @@ export default function DashboardPage() {
   const [listings, setListings] = useState<Listing[]>([])
   const [favorites, setFavorites] = useState<any[]>([])
   const [rentals, setRentals] = useState<Listing[]>([])
-  const [loading, setLoading] = useState(true)
+  const [isInitialLoading, setIsInitialLoading] = useState(true)
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -61,13 +61,13 @@ export default function DashboardPage() {
       setListings((listingsData as Listing[]) || [])
       setFavorites(favsData || [])
       setRentals((rentalsData as Listing[]) || [])
-      setLoading(false)
+      setIsInitialLoading(false)
     }
 
     checkAuth()
   }, [router])
 
-  if (loading) {
+  if (isInitialLoading) {
     return <LoadingPage />
   }
 

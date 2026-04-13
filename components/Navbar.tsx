@@ -26,6 +26,23 @@ export function Navbar({ user, showDashboard = true }: NavbarProps) {
             Delta Car
           </h1>
         </Link>
+
+        {/* Desktop Navigation */}
+        <div className="hidden md:flex items-center gap-8">
+          <Link href="/listings" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
+            Inventory
+          </Link>
+          <Link href="/services" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
+            Services
+          </Link>
+          <Link href="/how-it-works" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
+            How It Works
+          </Link>
+          <Link href="/about" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
+            About
+          </Link>
+        </div>
+
         <div className="flex items-center gap-4">
           {user ? (
             <>

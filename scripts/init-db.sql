@@ -32,6 +32,7 @@ CREATE TABLE IF NOT EXISTS public.listings (
   status TEXT DEFAULT 'available' CHECK (status IN ('available', 'sold', 'rented')),
   images JSONB DEFAULT '[]'::jsonb,
   specs JSONB DEFAULT '{}'::jsonb,
+  category TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );

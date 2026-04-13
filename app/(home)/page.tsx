@@ -57,11 +57,12 @@ export default function HomePage() {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div>
-            <h2 className="text-5xl font-serif font-bold text-foreground mb-6">
-              Your Premium Car Marketplace
+            <h2 className="text-6xl font-serif font-bold text-foreground leading-tight mb-6">
+              Precision Engineering. <br />
+              <span className="text-primary italic">Ultimate Freedom.</span>
             </h2>
-            <p className="text-lg text-muted-foreground mb-8">
-              Buy, sell, rent vehicles, or find maintenance services all in one place. Built for car enthusiasts and everyday drivers.
+            <p className="text-lg text-muted-foreground/90 mb-8 leading-relaxed max-w-lg font-light">
+              The premier ecosystem for vehicle acquisition, rental, and elite maintenance. Experience the Delta difference through a curated fleet of global excellence.
             </p>
             <div className="flex gap-4">
               <Link href="/listings?type=sale">
@@ -152,6 +153,62 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Scale & Trust Strip */}
+      <section className="bg-primary/5 border-y border-border py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            <div>
+              <p className="text-3xl font-serif font-bold text-primary">5k+</p>
+              <p className="text-xs uppercase tracking-widest text-muted-foreground mt-1">Active Listings</p>
+            </div>
+            <div>
+              <p className="text-3xl font-serif font-bold text-primary">12k+</p>
+              <p className="text-xs uppercase tracking-widest text-muted-foreground mt-1">Global Users</p>
+            </div>
+            <div>
+              <p className="text-3xl font-serif font-bold text-primary">15min</p>
+              <p className="text-xs uppercase tracking-widest text-muted-foreground mt-1">Avg Response</p>
+            </div>
+            <div>
+              <p className="text-3xl font-serif font-bold text-primary">99%</p>
+              <p className="text-xs uppercase tracking-widest text-muted-foreground mt-1">Safety Rating</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Lifestyle Categories */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
+          <div>
+            <h3 className="text-2xl font-serif font-bold text-foreground">Explore by Lifestyle</h3>
+            <p className="text-sm text-muted-foreground mt-1">Find the perfect match for your driving philosophy.</p>
+          </div>
+          <Link href="/listings" className="text-primary text-sm font-medium hover:underline flex items-center gap-2">
+            View full inventory <span>→</span>
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+          {[
+            { name: 'Luxury', image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=2070&auto=format&fit=crop', count: '1.2k' },
+            { name: 'Performance', image: 'https://images.unsplash.com/photo-1542281286-9e0a16bb7366?q=80&w=2070&auto=format&fit=crop', count: '840+' },
+            { name: 'Electric', image: 'https://images.unsplash.com/photo-1593941707882-a5bba14938c7?q=80&w=2072&auto=format&fit=crop', count: '320+' },
+            { name: 'Vintage', image: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=2070&auto=format&fit=crop', count: '150+' },
+            { name: 'Family', image: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?q=80&w=2070&auto=format&fit=crop', count: '2.1k' },
+          ].map((cat, i) => (
+            <Link key={i} href={`/listings?category=${cat.name}`} className="group relative h-64 rounded-xl overflow-hidden border border-border shadow-sm">
+              <Image src={cat.image} alt={cat.name} fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+              <div className="absolute bottom-4 left-4 text-white">
+                <p className="text-[10px] uppercase tracking-widest opacity-80 mb-0.5">{cat.count} Units</p>
+                <h4 className="text-lg font-serif font-bold">{cat.name}</h4>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
       {/* Features Section */}
       <section className="bg-card border-y border-border py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -178,6 +235,85 @@ export default function HomePage() {
                   {feature.title}
                 </h4>
                 <p className="text-muted-foreground">{feature.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Service Spotlight */}
+      <section className="bg-background py-24 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col lg:flex-row items-center gap-16">
+            <div className="lg:w-1/2 space-y-6">
+              <h3 className="text-4xl font-serif font-bold text-foreground">Beyond the Sale: <br /><span className="text-primary italic">Precision Care</span></h3>
+              <p className="text-lg text-muted-foreground leading-relaxed">
+                Delta Car isn't just about discovery. We ensure your vehicle maintains its peak engineering through our elite network of specialized technicians.
+              </p>
+              <ul className="space-y-4">
+                {[
+                  'Certified Multi-Point Inspections',
+                  'Performance Tuning & Optimization',
+                  'Nationwide Concierge Transport',
+                  'Strategic Maintenance Scheduling'
+                ].map((item, i) => (
+                  <li key={i} className="flex items-center gap-3">
+                    <div className="h-2 w-2 rounded-full bg-primary" />
+                    <span className="font-medium">{item}</span>
+                  </li>
+                ))}
+              </ul>
+              <div className="pt-4">
+                <Link href="/services">
+                  <Button variant="outline" size="lg">Explore Concierge Services</Button>
+                </Link>
+              </div>
+            </div>
+            <div className="lg:w-1/2 relative">
+              <div className="aspect-square rounded-full border border-primary/20 absolute -top-8 -right-8 w-64 h-64 animate-pulse" />
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-border">
+                <Image 
+                  src="/images/services/maintenance.png" 
+                  alt="Service" 
+                  width={800} 
+                  height={600} 
+                  className="object-cover"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section className="bg-secondary/10 py-24 border-y border-border">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h3 className="text-3xl font-serif font-bold mb-12">The Delta Experience</h3>
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                quote: "The inspection service gave me total peace of mind when buying my 911. The detail was unmatched.",
+                author: "Julian V.",
+                role: "Collector"
+              },
+              {
+                quote: "Sold my G-Wagon in 4 days. The reach of this platform is incredible compared to standard local listings.",
+                author: "Sarah K.",
+                role: "Private Seller"
+              },
+              {
+                quote: "Finally, a platform that understands what car enthusiasts actually need. The UI is a dream to use.",
+                author: "Marcus T.",
+                role: "Automotive Journalist"
+              }
+            ].map((t, i) => (
+              <div key={i} className="p-8 rounded-2xl bg-card border border-border text-left relative">
+                <div className="text-primary text-5xl font-serif absolute top-4 left-6 opacity-20">"</div>
+                <p className="text-muted-foreground mb-6 italic relative z-10">{t.quote}</p>
+                <div>
+                  <p className="font-bold">{t.author}</p>
+                  <p className="text-xs text-muted-foreground uppercase tracking-widest">{t.role}</p>
+                </div>
               </div>
             ))}
           </div>

@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { supabase, type MaintenanceRequest } from '@/lib/supabase'
 import { LoadingPage } from '@/components/ui/loading-page'
+import { Navbar } from '@/components/Navbar'
 
 export default function MaintenancePage() {
   const router = useRouter()
@@ -51,6 +52,7 @@ export default function MaintenancePage() {
 
   return (
     <main className="min-h-screen bg-background">
+      <Navbar user={user} />
       {/* Header */}
       <div className="border-b border-border bg-card">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">

@@ -12,15 +12,18 @@ import { Card, CardContent } from '@/components/ui/card'
 import { supabase, type Listing } from '@/lib/supabase'
 import { Navbar } from '@/components/Navbar'
 import { LoadingPage } from '@/components/ui/loading-page'
+import { Spinner } from '@/components/ui/spinner'
 
 export default function ListingsPage() {
   const searchParams = useSearchParams()
   const [listings, setListings] = useState<Listing[]>([])
   const [user, setUser] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
+  const [isInitialLoading, setIsInitialLoading] = useState(true)
+  const [isSearching, setIsSearching] = useState(false)
   const [search, setSearch] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
   const [type, setType] = useState(searchParams.get('type') || 'sale')
+  const [category, setCategory] = useState(searchParams.get('category') || '')
   const [minPrice, setMinPrice] = useState('')
   const [maxPrice, setMaxPrice] = useState('')
 
@@ -43,12 +46,16 @@ export default function ListingsPage() {
     let ignore = false
 
     const fetchListings = async () => {
-      setLoading(true)
+      setIsSearching(true)
       let query = supabase
         .from('listings')
         .select('*')
         .eq('status', 'available')
         .eq('type', type)
+
+      if (category) {
+        query = query.eq('category', category)
+      }
 
       if (debouncedSearch) {
         query = query.or(
@@ -72,16 +79,42 @@ export default function ListingsPage() {
 
       query = query.order('created_at', { ascending: false })
 
-      const { data, error } = await query
+      const { data, error: fetchError } = await query
       
       if (!ignore) {
-        if (error) {
-          console.error("Error fetching listings:", error)
-          setListings([])
+        if (fetchError) {
+          console.error("Supabase Error Details:", {
+            message: fetchError.message,
+            details: fetchError.details,
+            hint: fetchError.hint,
+            code: fetchError.code
+          })
+
+          // Graceful fallback: If category column is missing, try a keyword search for the category instead
+          if (fetchError.code === 'PGRST204' || fetchError.message.includes('column "category" does not exist')) {
+            console.warn("Category column missing. Falling back to keyword-based discovery...")
+            let fallbackQuery = supabase
+              .from('listings')
+              .select('*')
+              .eq('status', 'available')
+              .eq('type', type)
+              .or(`title.ilike.%${category}%,description.ilike.%${category}%,brand.ilike.%${category}%`)
+              .order('created_at', { ascending: false })
+            
+            const { data: fallbackData, error: secondError } = await fallbackQuery
+            if (secondError) {
+               setListings([])
+            } else {
+               setListings(fallbackData || [])
+            }
+          } else {
+            setListings([])
+          }
         } else {
           setListings(data || [])
         }
-        setLoading(false)
+        setIsSearching(false)
+        setIsInitialLoading(false)
       }
     }
 
@@ -92,7 +125,7 @@ export default function ListingsPage() {
     }
   }, [debouncedSearch, type, minPrice, maxPrice])
 
-  if (loading) {
+  if (isInitialLoading) {
     return <LoadingPage />
   }
 
@@ -105,9 +138,28 @@ export default function ListingsPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-serif font-bold text-foreground">
-                {type === 'sale' ? 'Cars for Sale' : 'Cars for Rent'}
-              </h1>
+              <div className="flex items-center gap-3">
+                <h1 className="text-3xl font-serif font-bold text-foreground">
+                  {type === 'sale' ? 'Cars for Sale' : 'Cars for Rent'}
+                </h1>
+                {category && (
+                  <div className="flex items-center gap-2 bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium border border-primary/20">
+                    {category}
+                    <button 
+                      onClick={() => setCategory('')}
+                      className="hover:text-primary/70 transition-colors ml-1"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                    </button>
+                  </div>
+                )}
+                {isSearching && (
+                  <div className="flex items-center gap-2 text-primary animate-pulse text-xs font-medium bg-primary/5 px-2 py-1 rounded-full border border-primary/20">
+                    <Spinner className="h-3 w-3" />
+                    Searching...
+                  </div>
+                )}
+              </div>
               <p className="text-muted-foreground mt-1">
                 {listings.length} listing{listings.length !== 1 ? 's' : ''} available
               </p>
@@ -177,7 +229,7 @@ export default function ListingsPage() {
               />
             </div>
 
-            {loading ? (
+            {isSearching && listings.length === 0 ? (
               <ListingGridSkeleton count={4} />
             ) : listings.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-96 text-center">

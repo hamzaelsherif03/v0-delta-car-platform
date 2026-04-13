@@ -102,8 +102,8 @@ function SignUpForm() {
                 disabled={loading}
               />
             </div>
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Creating account...' : 'Create Account'}
+            <Button type="submit" className="w-full" loading={loading}>
+              Create Account
             </Button>
           </form>
           <p className="text-sm text-muted-foreground mt-6 text-center">

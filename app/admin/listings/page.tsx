@@ -28,6 +28,7 @@ export default function AdminListingsPage() {
   const [listings, setListings] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
+  const [deletingId, setDeletingId] = useState<string | null>(null)
 
   useEffect(() => {
     fetchListings()
@@ -55,6 +56,7 @@ export default function AdminListingsPage() {
   }
 
   const handleDeleteListing = async (id: string, imageUrls: string[]) => {
+    setDeletingId(id)
     try {
       // 1. Delete associated images from storage
       if (imageUrls && imageUrls.length > 0) {
@@ -80,6 +82,8 @@ export default function AdminListingsPage() {
       setListings(current => current.filter(l => l.id !== id))
     } catch (err: any) {
       toast.error(err.message || 'Failed to delete listing')
+    } finally {
+      setDeletingId(null)
     }
   }
 
@@ -139,7 +143,7 @@ export default function AdminListingsPage() {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <Button variant="ghost" size="sm" asChild>
+                  <Button variant="ghost" size="sm" asChild disabled={deletingId === listing.id}>
                     <Link href={`/listings/${listing.id}`} target="_blank">
                       <ExternalLink className="h-4 w-4 mr-2" />
                       Preview
@@ -148,7 +152,12 @@ export default function AdminListingsPage() {
 
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
-                      <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive hover:bg-destructive/10">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                        loading={deletingId === listing.id}
+                      >
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </AlertDialogTrigger>

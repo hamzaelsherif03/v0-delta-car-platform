@@ -11,6 +11,8 @@ import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase'
 import { Navbar } from '@/components/Navbar'
 
+import { LoadingPage } from '@/components/ui/loading-page'
+
 export default function CreateListingPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
@@ -31,6 +33,7 @@ export default function CreateListingPage() {
     description: '',
     price: '',
     price_per_day: '',
+    category: '',
   })
 
   useEffect(() => {
@@ -109,6 +112,7 @@ export default function CreateListingPage() {
         price_per_day: formData.type === 'rent' && formData.price_per_day ? parseFloat(String(formData.price_per_day)) : null,
         status: 'available',
         images: imageUrls,
+        category: formData.category || null,
         specs: {},
       })
 
@@ -123,7 +127,7 @@ export default function CreateListingPage() {
   }
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>
+    return <LoadingPage />
   }
 
   return (
@@ -262,6 +266,22 @@ export default function CreateListingPage() {
                     onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                   />
                 </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Category / Lifestyle</label>
+                  <select
+                    value={formData.category}
+                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                    className="w-full px-3 py-2 border border-input rounded-md text-sm bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+                  >
+                    <option value="">Select Category</option>
+                    <option value="Luxury">Luxury</option>
+                    <option value="Performance">Performance</option>
+                    <option value="Electric">Electric</option>
+                    <option value="Vintage">Vintage</option>
+                    <option value="Family">Family / SUV</option>
+                  </select>
+                </div>
               </div>
 
               {/* Price */}
@@ -308,8 +328,8 @@ export default function CreateListingPage() {
                 >
                   Cancel
                 </Button>
-                <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? 'Creating...' : 'Create Listing'}
+                <Button type="submit" loading={isSubmitting}>
+                  Create Listing
                 </Button>
               </div>
             </form>

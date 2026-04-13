@@ -11,6 +11,8 @@ import { toast } from 'sonner'
 import { supabase, type Listing } from '@/lib/supabase'
 import { Navbar } from '@/components/Navbar'
 
+import { LoadingPage } from '@/components/ui/loading-page'
+
 export default function EditListingPage() {
   const router = useRouter()
   const params = useParams()
@@ -185,7 +187,7 @@ export default function EditListingPage() {
   }
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>
+    return <LoadingPage />
   }
 
   if (error) {
@@ -396,8 +398,8 @@ export default function EditListingPage() {
                 >
                   Cancel
                 </Button>
-                <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? 'Saving...' : 'Save Changes'}
+                <Button type="submit" loading={isSubmitting}>
+                  Save Changes
                 </Button>
               </div>
             </form>
