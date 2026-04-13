@@ -19,8 +19,8 @@ export function Navbar({ user, showDashboard = true }: NavbarProps) {
   }
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-border/50 bg-card/95 backdrop-blur-sm shadow-xs">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center justify-between">
+    <nav className="sticky top-0 z-50 border-b border-transparent hover:border-border/30 bg-background/40 backdrop-blur-md shadow-none hover:shadow-xs transition-all duration-300">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-4 group py-2 transition-transform duration-300 hover:scale-105">
           <img 
             src="/logo.png" 
