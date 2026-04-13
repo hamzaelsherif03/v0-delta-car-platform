@@ -5,9 +5,9 @@ import { Button } from './ui/button'
 
 export function Footer() {
   return (
-    <footer className="bg-card border-t border-border mt-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
+    <footer className="bg-card border-t border-border/50 mt-32">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-16">
           <div className="space-y-4">
             <Link href="/" className="flex items-center gap-3 group mb-4">
               <img 
@@ -26,37 +26,37 @@ export function Footer() {
 
           {/* Navigation */}
           <div>
-            <h4 className="text-sm font-bold uppercase tracking-widest text-foreground mb-6">Explore</h4>
-            <ul className="space-y-3">
-              <li><Link href="/listings" className="text-sm text-muted-foreground hover:text-primary transition-colors">Inventory</Link></li>
-              <li><Link href="/services" className="text-sm text-muted-foreground hover:text-primary transition-colors">Services</Link></li>
-              <li><Link href="/how-it-works" className="text-sm text-muted-foreground hover:text-primary transition-colors">How It Works</Link></li>
-              <li><Link href="/about" className="text-sm text-muted-foreground hover:text-primary transition-colors">About Us</Link></li>
+            <h4 className="text-xs font-bold uppercase tracking-widest text-foreground mb-8">Explore</h4>
+            <ul className="space-y-4">
+              <li><Link href="/listings" className="text-sm text-muted-foreground hover:text-primary transition-colors duration-200">Inventory</Link></li>
+              <li><Link href="/services" className="text-sm text-muted-foreground hover:text-primary transition-colors duration-200">Services</Link></li>
+              <li><Link href="/how-it-works" className="text-sm text-muted-foreground hover:text-primary transition-colors duration-200">How It Works</Link></li>
+              <li><Link href="/about" className="text-sm text-muted-foreground hover:text-primary transition-colors duration-200">About Us</Link></li>
             </ul>
           </div>
 
           {/* Legal / Social */}
           <div>
-            <h4 className="text-sm font-bold uppercase tracking-widest text-foreground mb-6">Platform</h4>
-            <ul className="space-y-3">
-              <li><Link href="/auth/login" className="text-sm text-muted-foreground hover:text-primary transition-colors">Partner Program</Link></li>
-              <li><Link href="/privacy" className="text-sm text-muted-foreground hover:text-primary transition-colors">Privacy Policy</Link></li>
-              <li><Link href="/terms" className="text-sm text-muted-foreground hover:text-primary transition-colors">Terms of Service</Link></li>
-              <li><Link href="/cookie-policy" className="text-sm text-muted-foreground hover:text-primary transition-colors">Cookie Policy</Link></li>
+            <h4 className="text-xs font-bold uppercase tracking-widest text-foreground mb-8">Platform</h4>
+            <ul className="space-y-4">
+              <li><Link href="/auth/login" className="text-sm text-muted-foreground hover:text-primary transition-colors duration-200">Partner Program</Link></li>
+              <li><Link href="/privacy" className="text-sm text-muted-foreground hover:text-primary transition-colors duration-200">Privacy Policy</Link></li>
+              <li><Link href="/terms" className="text-sm text-muted-foreground hover:text-primary transition-colors duration-200">Terms of Service</Link></li>
+              <li><Link href="/cookie-policy" className="text-sm text-muted-foreground hover:text-primary transition-colors duration-200">Cookie Policy</Link></li>
             </ul>
           </div>
 
           {/* Contact / Newsletter */}
-          <div className="space-y-6">
+          <div className="space-y-8">
             <div>
-              <h4 className="text-sm font-bold uppercase tracking-widest text-foreground mb-4">Stay Informed</h4>
+              <h4 className="text-xs font-bold uppercase tracking-widest text-foreground mb-6">Stay Informed</h4>
               <div className="flex gap-2">
                 <input
                   type="email"
                   placeholder="Enter email"
-                  className="flex-1 bg-background border border-border rounded-md px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
+                  className="flex-1 bg-background border border-border/50 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all duration-200"
                 />
-                <Button size="sm">Join</Button>
+                <Button size="sm" className="px-4">Join</Button>
               </div>
             </div>
             <div className="flex gap-4 opacity-60">
@@ -67,14 +67,14 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-border mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="border-t border-border/30 mt-16 pt-12 flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="text-xs text-muted-foreground">
             © {new Date().getFullYear()} Delta Car Platform. All rights reserved.
           </p>
-          <div className="flex gap-6 text-[10px] items-center text-muted-foreground uppercase tracking-widest">
-            <span>Powered by Precision</span>
-            <div className="w-1 h-1 bg-primary rounded-full" />
-            <span>Excellence Guaranteed</span>
+          <div className="flex gap-8 text-[10px] items-center text-muted-foreground uppercase tracking-widest">
+            <span className="hover:text-primary transition-colors duration-200">Powered by Precision</span>
+            <div className="w-1 h-1 bg-primary/50 rounded-full" />
+            <span className="hover:text-primary transition-colors duration-200">Excellence Guaranteed</span>
           </div>
         </div>
       </div>

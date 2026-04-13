@@ -16,7 +16,7 @@
   --secondary-foreground: oklch(0.145 0 0);
   --muted: oklch(0.95 0 0);
   --muted-foreground: oklch(0.5 0 0);
-  --accent: oklch(0.95 0 0);
+  --accent: oklch(0.7 0.15 50); /* Gold accent for premium touches */
   --accent-foreground: oklch(0.145 0 0);
   --destructive: oklch(0.5 0.2 25);
   --destructive-foreground: oklch(1 0 0);
@@ -29,6 +29,36 @@
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
   --radius: 0.625rem;
+  
+  /* Spacing Scale */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 0.75rem;
+  --space-base: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4rem;
+  
+  /* Shadow Hierarchy */
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  
+  /* Typography Scale */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  --text-5xl: 3rem;
+  --text-6xl: 3.75rem;
+  --text-7xl: 4.5rem;
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);
@@ -52,7 +82,7 @@
   --secondary-foreground: oklch(0.95 0.01 70);
   --muted: oklch(0.35 0.04 40);
   --muted-foreground: oklch(0.65 0.05 40);
-  --accent: oklch(0.72 0.12 50);
+  --accent: oklch(0.75 0.12 55);
   --accent-foreground: oklch(0.18 0.03 40);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.95 0.01 70);
@@ -120,6 +150,7 @@
 @layer base {
   html {
     font-size: 90% !important;
+    @apply scroll-smooth;
   }
   * {
     @apply border-border outline-ring/50;
@@ -128,31 +159,180 @@
     @apply bg-background text-foreground;
   }
 
+  /* Typography System */
+  h1 {
+    @apply text-6xl font-bold leading-tight tracking-tight;
+  }
+  h2 {
+    @apply text-4xl font-bold leading-snug tracking-tight;
+  }
+  h3 {
+    @apply text-2xl font-semibold leading-snug;
+  }
+  h4 {
+    @apply text-xl font-semibold tracking-widest;
+  }
+
   /* Global Tactile Feedback */
   button, 
   a.button,
   .btn,
   [role="button"],
   .cursor-pointer {
-    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
   }
 
   button:hover, 
   a.button:hover,
   [role="button"]:hover,
   .hover\:shadow-lg:hover {
-    transform: translateY(-1px);
+    transform: translateY(-2px);
   }
 
   button:active, 
   a.button:active,
   [role="button"]:active,
   .hover\:shadow-lg:active {
-    transform: scale(0.96) translateY(0);
+    transform: scale(0.97) translateY(0);
   }
 
   /* Interactive cards feedback */
   .hover\:shadow-lg {
     transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+
+  /* Scroll reveal animation */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideInFromLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slideInFromRight {
+    from {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -1000px 0;
+    }
+    100% {
+      background-position: 1000px 0;
+    }
+  }
+
+  .animate-fadeInUp {
+    animation: fadeInUp 0.6s ease-out;
+  }
+
+  .animate-fadeIn {
+    animation: fadeIn 0.4s ease-out;
+  }
+
+  .animate-slideInLeft {
+    animation: slideInFromLeft 0.6s ease-out;
+  }
+
+  .animate-slideInRight {
+    animation: slideInFromRight 0.6s ease-out;
+  }
+
+  .animate-pulse-slow {
+    animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .animate-shimmer {
+    animation: shimmer 2s infinite;
+  }
+
+  /* Additional decorative animations for premium feel */
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  @keyframes glow {
+    0%, 100% {
+      box-shadow: 0 0 20px rgba(var(--primary), 0.3);
+    }
+    50% {
+      box-shadow: 0 0 30px rgba(var(--primary), 0.5);
+    }
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite;
+  }
+
+  /* Smooth scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: oklch(var(--primary) / 0.3);
+    border-radius: 6px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+    transition: background-color 0.2s ease;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: oklch(var(--primary) / 0.5);
+    background-clip: content-box;
   }
 }
