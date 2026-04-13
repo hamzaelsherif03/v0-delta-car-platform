@@ -22,13 +22,13 @@ export function Navbar({ user, showDashboard = true }: NavbarProps) {
     <nav className="sticky top-0 z-50 border-b border-transparent hover:border-border/30 bg-background/40 backdrop-blur-md shadow-none hover:shadow-xs transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-4 group py-2 transition-transform duration-300 hover:scale-105">
-          <img 
-            src="/logo.png" 
-            alt="Delta" 
-            className="h-12 w-auto object-contain transition-all duration-500 group-hover:drop-shadow-md" 
+          <img
+            src="/logo.png"
+            alt="Delta"
+            className="h-12 w-auto object-contain transition-all duration-500 group-hover:drop-shadow-md"
           />
           <h1 className="text-2xl font-playfair font-bold text-primary tracking-tight">
-            Delta
+            Delta Car
           </h1>
         </Link>
 
