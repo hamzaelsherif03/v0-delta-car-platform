@@ -25,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="bg-background scroll-smooth">
       <body className={`${_geist.className} ${_playfair.variable} antialiased`} suppressHydrationWarning>
         <Suspense fallback={null}>
           <ProgressBar />

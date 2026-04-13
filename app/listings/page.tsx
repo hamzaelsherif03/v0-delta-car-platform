@@ -187,12 +187,12 @@ function ListingsContent({
       <Navbar user={user} />
 
       {/* Page Header */}
-      <div className="border-b border-border bg-card/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="border-b border-border/30 bg-gradient-to-b from-card/50 to-background/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="flex items-center justify-between">
-            <div>
-              <div className="flex items-center gap-3">
-                <h1 className="text-3xl font-serif font-bold text-foreground">
+            <div className="animate-fadeInUp">
+              <div className="flex items-center gap-4 flex-wrap">
+                <h1 className="text-4xl md:text-5xl font-playfair font-bold text-foreground">
                   {type === 'sale' ? 'Cars for Sale' : 'Cars for Rent'}
                 </h1>
                 {category && (
@@ -222,15 +222,15 @@ function ListingsContent({
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid lg:grid-cols-4 gap-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="grid lg:grid-cols-4 gap-10">
           {/* Filters */}
           <div className="lg:col-span-1">
-            <div className="space-y-6 sticky top-6">
+            <div className="space-y-8 sticky top-6 animate-slideInLeft">
               {/* Type Filter */}
-              <div className="space-y-3">
-                <h3 className="font-serif font-bold text-foreground">Listing Type</h3>
-                <div className="space-y-2">
+              <div className="space-y-4 p-6 rounded-2xl bg-card border border-border/50">
+                <h3 className="font-playfair font-bold text-foreground text-lg">Listing Type</h3>
+                <div className="space-y-3">
                   {['sale', 'rent'].map((t) => (
                     <label key={t} className="flex items-center gap-2 cursor-pointer">
                       <input
@@ -248,9 +248,9 @@ function ListingsContent({
               </div>
 
               {/* Price Filter */}
-              <div className="space-y-3">
-                <h3 className="font-serif font-bold text-foreground">Price Range</h3>
-                <div className="space-y-2">
+              <div className="space-y-4 p-6 rounded-2xl bg-card border border-border/50">
+                <h3 className="font-playfair font-bold text-foreground text-lg">Price Range</h3>
+                <div className="space-y-3">
                   <Input
                     type="number"
                     placeholder={type === 'sale' ? 'Min price' : 'Min per day'}
@@ -269,14 +269,14 @@ function ListingsContent({
           </div>
 
           {/* Listings */}
-          <div className="lg:col-span-3">
-            <div className="mb-6">
+          <div className="lg:col-span-3 animate-slideInRight">
+            <div className="mb-8">
               <Input
                 type="search"
                 placeholder="Search by brand, model, or location..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full"
+                className="w-full px-6 py-3 rounded-xl border border-border/50 text-base shadow-sm focus:shadow-md transition-shadow"
               />
             </div>
 
@@ -290,36 +290,37 @@ function ListingsContent({
                 </Button>
               </div>
             ) : (
-              <div className="grid md:grid-cols-2 gap-6">
-                {listings.map((listing) => (
-                  <Link key={listing.id} href={`/listings/${listing.id}`}>
-                    <Card className="h-full hover:shadow-xl hover:border-primary/50 transition-all duration-300 cursor-pointer">
-                      <div className="aspect-video bg-secondary/20 rounded-t-lg flex items-center justify-center overflow-hidden relative">
+              <div className="grid md:grid-cols-2 gap-8">
+                {listings.map((listing, i) => (
+                  <Link key={listing.id} href={`/listings/${listing.id}`} className="group animate-fadeInUp" style={{ animationDelay: `${(i % 6) * 0.05}s` }}>
+                    <Card className="h-full hover:shadow-2xl hover:border-primary/50 hover:-translate-y-2 transition-all duration-300 cursor-pointer group-hover:shadow-primary/10">
+                      <div className="aspect-video bg-gradient-to-br from-secondary/20 to-secondary/5 rounded-t-2xl flex items-center justify-center overflow-hidden relative">
                         {listing.images && listing.images.length > 0 ? (
-                          <Image src={listing.images[0]} alt={listing.title} fill className="object-cover" />
+                          <Image src={listing.images[0]} alt={listing.title} fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
                         ) : (
                           <p className="text-muted-foreground text-xs">No Image</p>
                         )}
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300" />
                       </div>
-                      <CardContent className="p-4 space-y-3">
+                      <CardContent className="p-6 space-y-4">
                         <div>
-                          <h3 className="font-serif font-bold text-foreground">
+                          <h3 className="font-playfair font-bold text-foreground text-lg group-hover:text-primary transition-colors">
                             {listing.brand} {listing.model}
                           </h3>
-                          <p className="text-sm text-muted-foreground">
+                          <p className="text-sm text-muted-foreground mt-1">
                             {listing.year} • {listing.mileage ? `${listing.mileage.toLocaleString()} km` : 'N/A'}
                           </p>
                         </div>
-                        <p className="text-sm text-muted-foreground line-clamp-2">
+                        <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
                           {listing.description || 'No description provided'}
                         </p>
-                        <div className="flex items-end justify-between pt-2">
-                          <div>
-                            <p className="text-xs text-muted-foreground">
+                        <div className="flex items-end justify-between pt-4 border-t border-border/30">
+                          <div className="pt-2">
+                            <p className="text-xs text-muted-foreground uppercase tracking-wider">
                               {listing.location || 'Location not specified'}
                             </p>
                           </div>
-                          <p className="text-lg font-serif font-bold text-primary">
+                          <p className="text-2xl font-playfair font-bold text-primary">
                             {listing.type === 'sale'
                               ? `${listing.price?.toLocaleString()} EGP`
                               : `${listing.price_per_day} EGP/day`}

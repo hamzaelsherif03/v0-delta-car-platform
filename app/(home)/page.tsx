@@ -54,19 +54,19 @@ export default function HomePage() {
       <Navbar user={user} />
 
       {/* Hero Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
-          <div>
-            <h2 className="text-[3.375rem] font-serif font-bold text-foreground leading-tight mb-6">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-32">
+        <div className="grid md:grid-cols-2 gap-16 items-center">
+          <div className="animate-slideInLeft">
+            <h1 className="text-6xl md:text-7xl font-playfair font-bold text-foreground leading-tight mb-8 tracking-tight">
               Where Engineering <br />
-              <span className="text-primary italic">Meets Elegance.</span>
-            </h2>
-            <p className="text-base text-muted-foreground/90 mb-8 leading-relaxed max-w-lg font-light">
+              <span className="text-primary italic font-light">Meets Elegance.</span>
+            </h1>
+            <p className="text-lg text-muted-foreground/80 mb-12 leading-relaxed max-w-xl font-light">
               Delta Car is more than a marketplace; it is an ecosystem of automotive passion. Discover an elite fleet of vehicles designed for those who demand a superior journey.
             </p>
-            <div className="flex gap-4">
+            <div className="flex gap-4 flex-wrap">
               <Link href="/listings?type=sale">
-                <Button size="lg" className="bg-primary hover:bg-primary/90">
+                <Button size="lg" className="bg-primary hover:bg-primary/85 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all">
                   Browse Cars
                 </Button>
               </Link>
@@ -77,7 +77,7 @@ export default function HomePage() {
               </Link>
             </div>
           </div>
-          <div className="relative bg-secondary/20 rounded-2xl h-96 flex items-center justify-center overflow-hidden border border-border shadow-2xl">
+          <div className="relative bg-gradient-to-br from-secondary/30 to-secondary/10 rounded-3xl h-96 md:h-[500px] flex items-center justify-center overflow-hidden border border-border/50 shadow-xl hover:shadow-2xl transition-shadow duration-500 animate-slideInRight">
             {featuredListings.length > 0 ? (
               featuredListings.map((listing, index) => (
                 <div
@@ -154,42 +154,42 @@ export default function HomePage() {
       </section>
 
       {/* Scale & Trust Strip */}
-      <section className="bg-primary/5 border-y border-border py-8">
+      <section className="bg-gradient-to-r from-primary/5 via-secondary/5 to-primary/5 border-y border-border/50 py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <div>
-              <p className="text-3xl font-serif font-bold text-primary">5k+</p>
-              <p className="text-xs uppercase tracking-widest text-muted-foreground mt-1">Active Listings</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-12 text-center">
+            <div className="animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
+              <p className="text-4xl font-playfair font-bold text-primary">5k+</p>
+              <p className="text-xs uppercase tracking-widest text-muted-foreground mt-3">Active Listings</p>
             </div>
-            <div>
-              <p className="text-3xl font-serif font-bold text-primary">12k+</p>
-              <p className="text-xs uppercase tracking-widest text-muted-foreground mt-1">Global Users</p>
+            <div className="animate-fadeInUp" style={{ animationDelay: '0.2s' }}>
+              <p className="text-4xl font-playfair font-bold text-primary">12k+</p>
+              <p className="text-xs uppercase tracking-widest text-muted-foreground mt-3">Global Users</p>
             </div>
-            <div>
-              <p className="text-3xl font-serif font-bold text-primary">15min</p>
-              <p className="text-xs uppercase tracking-widest text-muted-foreground mt-1">Avg Response</p>
+            <div className="animate-fadeInUp" style={{ animationDelay: '0.3s' }}>
+              <p className="text-4xl font-playfair font-bold text-primary">15min</p>
+              <p className="text-xs uppercase tracking-widest text-muted-foreground mt-3">Avg Response</p>
             </div>
-            <div>
-              <p className="text-3xl font-serif font-bold text-primary">99%</p>
-              <p className="text-xs uppercase tracking-widest text-muted-foreground mt-1">Safety Rating</p>
+            <div className="animate-fadeInUp" style={{ animationDelay: '0.4s' }}>
+              <p className="text-4xl font-playfair font-bold text-primary">99%</p>
+              <p className="text-xs uppercase tracking-widest text-muted-foreground mt-3">Safety Rating</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* Lifestyle Categories */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8">
           <div>
-            <h3 className="text-2xl font-serif font-bold text-foreground">Explore by Lifestyle</h3>
-            <p className="text-sm text-muted-foreground mt-1">Find the perfect match for your driving philosophy.</p>
+            <h2 className="text-4xl font-playfair font-bold text-foreground">Explore by Lifestyle</h2>
+            <p className="text-base text-muted-foreground mt-3 max-w-lg">Find the perfect match for your driving philosophy and personal style.</p>
           </div>
-          <Link href="/listings" className="text-primary text-sm font-medium hover:underline flex items-center gap-2">
-            View full inventory <span>→</span>
+          <Link href="/listings" className="text-primary text-sm font-medium hover:text-primary/80 flex items-center gap-2 transition-colors">
+            View full inventory <span className="transition-transform group-hover:translate-x-1">→</span>
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-6">
           {[
             { name: 'Luxury', image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=2070&auto=format&fit=crop', count: '1.2k' },
             { name: 'Performance', image: 'https://images.unsplash.com/photo-1542281286-9e0a16bb7366?q=80&w=2070&auto=format&fit=crop', count: '840+' },
@@ -197,7 +197,7 @@ export default function HomePage() {
             { name: 'Vintage', image: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=2070&auto=format&fit=crop', count: '150+' },
             { name: 'Family', image: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?q=80&w=2070&auto=format&fit=crop', count: '2.1k' },
           ].map((cat, i) => (
-            <Link key={i} href={`/listings?category=${cat.name}`} className="group relative h-64 rounded-xl overflow-hidden border border-border shadow-sm hover:shadow-lg transition-all duration-300">
+            <Link key={i} href={`/listings?category=${cat.name}`} className="group relative h-72 rounded-2xl overflow-hidden border border-border/30 shadow-md hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
               <Image src={cat.image} alt={cat.name} fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
               <div className="absolute bottom-4 left-4 text-white">
@@ -210,11 +210,11 @@ export default function HomePage() {
       </section>
 
       {/* Features Section */}
-      <section className="bg-card border-y border-border py-20">
+      <section className="bg-gradient-to-b from-card/50 to-background/50 border-y border-border/30 py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h3 className="text-3xl font-serif font-bold text-foreground mb-12 text-center">
+          <h2 className="text-4xl md:text-5xl font-playfair font-bold text-foreground mb-16 text-center">
             Everything You Need
-          </h3>
+          </h2>
           <div className="grid md:grid-cols-3 gap-8">
             {[
               {
@@ -230,11 +230,11 @@ export default function HomePage() {
                 description: 'Connect with trusted service providers for all your vehicle needs.',
               },
             ].map((feature, i) => (
-              <div key={i} className="p-6 rounded-lg bg-background border border-border">
-                <h4 className="text-xl font-serif font-bold text-primary mb-3">
+              <div key={i} className="p-8 rounded-2xl bg-card border border-border/50 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300 animate-fadeInUp" style={{ animationDelay: `${i * 0.1}s` }}>
+                <h3 className="text-2xl font-playfair font-bold text-primary mb-4">
                   {feature.title}
-                </h4>
-                <p className="text-muted-foreground">{feature.description}</p>
+                </h3>
+                <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
               </div>
             ))}
           </div>
@@ -242,12 +242,12 @@ export default function HomePage() {
       </section>
 
       {/* Service Spotlight */}
-      <section className="bg-background py-24 overflow-hidden">
+      <section className="bg-background py-32 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col lg:flex-row items-center gap-16">
-            <div className="lg:w-1/2 space-y-6">
-              <h3 className="text-4xl font-serif font-bold text-foreground">Beyond the Sale: <br /><span className="text-primary italic">Precision Care</span></h3>
-              <p className="text-lg text-muted-foreground leading-relaxed">
+          <div className="flex flex-col lg:flex-row items-center gap-20">
+            <div className="lg:w-1/2 space-y-8 animate-slideInLeft">
+              <h2 className="text-5xl md:text-6xl font-playfair font-bold text-foreground leading-tight">Beyond the Sale: <br /><span className="text-primary italic font-light">Precision Care</span></h2>
+              <p className="text-lg text-muted-foreground leading-relaxed font-light">
                 Delta Car isn't just about discovery. We ensure your vehicle maintains its peak engineering through our elite network of specialized technicians.
               </p>
               <ul className="space-y-4">
@@ -286,9 +286,9 @@ export default function HomePage() {
       </section>
 
       {/* Testimonials */}
-      <section className="bg-secondary/10 py-24 border-y border-border">
+      <section className="bg-gradient-to-b from-secondary/5 to-background/50 py-32 border-y border-border/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h3 className="text-3xl font-serif font-bold mb-12">The Delta Experience</h3>
+          <h2 className="text-4xl md:text-5xl font-playfair font-bold mb-16">The Delta Experience</h2>
           <div className="grid md:grid-cols-3 gap-8">
             {[
               {
@@ -307,12 +307,12 @@ export default function HomePage() {
                 role: "Automotive Journalist"
               }
             ].map((t, i) => (
-              <div key={i} className="p-8 rounded-2xl bg-card border border-border text-left relative">
-                <div className="text-primary text-5xl font-serif absolute top-4 left-6 opacity-20">"</div>
-                <p className="text-muted-foreground mb-6 italic relative z-10">{t.quote}</p>
+              <div key={i} className="p-10 rounded-2xl bg-card border border-border/50 shadow-md hover:shadow-lg text-left relative transition-all duration-300 hover:-translate-y-2 animate-fadeInUp" style={{ animationDelay: `${i * 0.1}s` }}>
+                <div className="text-primary/20 text-6xl font-playfair absolute top-6 left-8">"</div>
+                <p className="text-muted-foreground mb-8 italic relative z-10 leading-relaxed text-base">{t.quote}</p>
                 <div>
-                  <p className="font-bold">{t.author}</p>
-                  <p className="text-xs text-muted-foreground uppercase tracking-widest">{t.role}</p>
+                  <p className="font-semibold text-foreground">{t.author}</p>
+                  <p className="text-xs text-muted-foreground uppercase tracking-widest mt-1">{t.role}</p>
                 </div>
               </div>
             ))}
@@ -322,16 +322,16 @@ export default function HomePage() {
 
       {/* CTA Section */}
       {!user && (
-        <section className="bg-primary text-primary-foreground py-16">
-          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h3 className="text-3xl font-serif font-bold mb-6">
+        <section className="bg-gradient-to-r from-primary via-primary to-primary/90 text-primary-foreground py-24">
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center animate-fadeIn">
+            <h2 className="text-5xl md:text-6xl font-playfair font-bold mb-8 tracking-tight">
               Ready to Get Started?
-            </h3>
-            <p className="text-lg mb-8 opacity-90">
+            </h2>
+            <p className="text-lg md:text-xl mb-10 opacity-95 leading-relaxed">
               Join thousands of happy buyers, sellers, and service seekers on Delta Car.
             </p>
             <Link href="/auth/signup">
-              <Button size="lg" variant="secondary">
+              <Button size="lg" variant="secondary" className="shadow-lg hover:shadow-xl">
                 Create Account Now
               </Button>
             </Link>
