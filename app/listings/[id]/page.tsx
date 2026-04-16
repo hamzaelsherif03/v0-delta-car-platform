@@ -19,6 +19,12 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import { toast } from "sonner"
 import { supabase, type Listing, type User } from '@/lib/supabase'
 import { Navbar } from '@/components/Navbar'
@@ -33,6 +39,7 @@ export default function ListingDetailPage() {
   const [isOwner, setIsOwner] = useState(false)
   const [loading, setLoading] = useState(true)
   const [isDeleting, setIsDeleting] = useState(false)
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -159,17 +166,39 @@ export default function ListingDetailPage() {
           <div className="lg:col-span-2 space-y-6">
             {/* Image Gallery */}
             <div className="space-y-4">
-              <div className="aspect-video bg-secondary/20 rounded-lg flex items-center justify-center overflow-hidden border border-border relative">
-                {listing.images && listing.images.length > 0 ? (
-                  <Image src={listing.images[0]} alt={listing.title} fill className="object-cover" />
-                ) : (
-                  <p className="text-muted-foreground">No images available</p>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <div className="aspect-video bg-secondary/20 rounded-lg flex items-center justify-center overflow-hidden border border-border relative cursor-pointer group">
+                    {listing.images && listing.images.length > 0 ? (
+                      <>
+                        <Image src={listing.images[selectedImageIndex] || listing.images[0]} alt={listing.title} fill className="object-cover group-hover:scale-[1.02] transition-transform duration-500" />
+                        <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                          <span className="text-white font-medium bg-black/50 px-4 py-2 rounded-full backdrop-blur-sm">Click to expand</span>
+                        </div>
+                      </>
+                    ) : (
+                      <p className="text-muted-foreground">No images available</p>
+                    )}
+                  </div>
+                </DialogTrigger>
+                {listing.images && listing.images.length > 0 && (
+                  <DialogContent className="max-w-5xl w-full p-0 bg-transparent border-none shadow-none">
+                    <DialogTitle className="sr-only">Image preview</DialogTitle>
+                    <div className="aspect-video relative rounded-lg overflow-hidden shadow-2xl">
+                      <Image src={listing.images[selectedImageIndex] || listing.images[0]} alt={listing.title} fill className="object-contain bg-background/95 backdrop-blur-md" />
+                    </div>
+                  </DialogContent>
                 )}
-              </div>
+              </Dialog>
+              
               {listing.images && listing.images.length > 1 && (
                 <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
                   {listing.images.map((img, i) => (
-                    <div key={i} className="aspect-video rounded-md overflow-hidden border border-border relative group cursor-pointer">
+                    <div 
+                      key={i} 
+                      className={`aspect-video rounded-md overflow-hidden border relative group cursor-pointer transition-all duration-200 ${selectedImageIndex === i ? 'border-primary ring-2 ring-primary border-transparent' : 'border-border opacity-60 hover:opacity-100'}`}
+                      onClick={() => setSelectedImageIndex(i)}
+                    >
                       <Image src={img} alt={`${listing.title} ${i + 1}`} fill className="object-cover group-hover:scale-110 transition-transform" />
                     </div>
                   ))}
