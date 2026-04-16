@@ -16,7 +16,10 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true)
   const [activeSlide, setActiveSlide] = useState(0)
   const [visiblePhones, setVisiblePhones] = useState<{ [key: string]: string }>({})
+  const [scrollState, setScrollState] = useState({ canScrollLeft: false, canScrollRight: false, isScrollable: false })
+  const [scrollProgress, setScrollProgress] = useState(0)
   const scrollRef = useRef<HTMLDivElement>(null)
+  const teamSectionRef = useRef<HTMLDivElement>(null)
 
   const teamMembers = [
     { name: 'Doaa Yasser', image: '/images/Customer Service/Doaa Yasser.jpeg' },
@@ -34,7 +37,7 @@ export default function HomePage() {
 
   const handleContactClick = (name: string) => {
     if (!visiblePhones[name]) {
-      setVisiblePhones(prev => ({ ...prev, [name]: generateRandomPhone() }))
+      setVisiblePhones({ [name]: generateRandomPhone() })
     }
   }
 
@@ -45,6 +48,67 @@ export default function HomePage() {
       scrollRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' })
     }
   }
+
+  const checkScroll = () => {
+    if (scrollRef.current) {
+      const el = scrollRef.current
+      const maxScroll = el.scrollWidth - el.clientWidth
+      
+      setScrollState({
+        canScrollLeft: el.scrollLeft > 5,
+        canScrollRight: Math.ceil(el.scrollLeft + el.clientWidth) < el.scrollWidth - 5,
+        isScrollable: maxScroll > 0,
+      })
+      
+      if (maxScroll > 0) {
+        setScrollProgress((el.scrollLeft / maxScroll) * 100)
+      } else {
+        setScrollProgress(0)
+      }
+    }
+  }
+
+  useEffect(() => {
+    checkScroll()
+    // Repeated checks to catch post-mount layouts (images loading, font rendering)
+    const t1 = setTimeout(checkScroll, 100)
+    const t2 = setTimeout(checkScroll, 500)
+    const t3 = setTimeout(checkScroll, 1000)
+    const currentScrollRef = scrollRef.current
+    let observer: ResizeObserver | null = null
+
+    if (currentScrollRef) {
+      currentScrollRef.addEventListener('scroll', checkScroll)
+      window.addEventListener('resize', checkScroll)
+
+      if (typeof ResizeObserver !== 'undefined') {
+        observer = new ResizeObserver(() => checkScroll())
+        observer.observe(currentScrollRef)
+        Array.from(currentScrollRef.children).forEach(child => observer.observe(child))
+      }
+    }
+    
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement
+      // Hide if click was anywhere except inside a contact button or revealed phone box
+      if (!target.closest('.contact-support-element')) {
+        setVisiblePhones({})
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+
+    return () => {
+      if (currentScrollRef) {
+        currentScrollRef.removeEventListener('scroll', checkScroll)
+        window.removeEventListener('resize', checkScroll)
+      }
+      if (observer) observer.disconnect()
+      document.removeEventListener('mousedown', handleClickOutside)
+      clearTimeout(t1)
+      clearTimeout(t2)
+      clearTimeout(t3)
+    }
+  }, [])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -351,8 +415,8 @@ export default function HomePage() {
       </section>
 
       {/* Customer Service Team */}
-      <section className="bg-background py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative group/section">
+      <section id="support" ref={teamSectionRef} className="bg-background py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="text-center mb-16">
             <h3 className="text-4xl font-serif font-bold text-foreground mb-4">Our Customer Service Team</h3>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -360,25 +424,36 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="relative">
+          <div className="relative group/carousel">
             {/* Scroll Navigation Arrows */}
             <button 
               onClick={() => scroll('left')}
-              className="absolute -left-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-background/80 backdrop-blur-md border border-border shadow-xl flex items-center justify-center text-foreground hover:bg-primary hover:text-white transition-all opacity-0 group-hover/section:opacity-100 hidden md:flex"
+              aria-label="Scroll left"
+              className={`absolute left-0 md:left-2 top-1/2 -translate-y-1/2 z-40 w-12 h-12 md:w-14 md:h-14 rounded-full bg-background/95 backdrop-blur-md border border-border shadow-[0_0_20px_rgba(0,0,0,0.3)] flex items-center justify-center transition-all duration-300 sm:flex ${
+                scrollState.canScrollLeft 
+                  ? 'text-foreground hover:bg-primary hover:text-white opacity-100 hover:scale-110 cursor-pointer' 
+                  : 'opacity-0 scale-90 pointer-events-none'
+              }`}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
             </button>
             
             <button 
               onClick={() => scroll('right')}
-              className="absolute -right-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-background/80 backdrop-blur-md border border-border shadow-xl flex items-center justify-center text-foreground hover:bg-primary hover:text-white transition-all opacity-0 group-hover/section:opacity-100 hidden md:flex"
+              aria-label="Scroll right"
+              className={`absolute right-0 md:right-2 top-1/2 -translate-y-1/2 z-40 w-12 h-12 md:w-14 md:h-14 rounded-full bg-background/95 backdrop-blur-md border border-border shadow-[0_0_20px_rgba(0,0,0,0.3)] flex items-center justify-center transition-all duration-300 sm:flex ${
+                scrollState.canScrollRight 
+                  ? 'text-foreground hover:bg-primary hover:text-white opacity-100 hover:scale-110 cursor-pointer' 
+                  : 'opacity-0 scale-90 pointer-events-none'
+              }`}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
             </button>
 
             <div 
               ref={scrollRef}
-              className="flex overflow-x-auto gap-6 pb-12 snap-x snap-mandatory hide-scrollbar pt-4"
+              onScroll={checkScroll}
+              className="flex overflow-x-auto gap-6 pb-12 snap-x snap-mandatory hide-scrollbar pt-4 px-2"
             >
               {teamMembers.map((member, i) => (
                 <div 
@@ -404,10 +479,10 @@ export default function HomePage() {
                       <p className="text-xs text-white/70">Support Specialist</p>
                     </div>
                     
-                    <div className="mt-4">
+                    <div className="mt-4 contact-support-element">
                       {visiblePhones[member.name] ? (
-                        <div className="bg-primary/20 backdrop-blur-md border border-primary/30 rounded-lg py-2 px-3 text-center animate-in fade-in zoom-in-95">
-                          <p className="text-primary text-sm font-bold tracking-wider">{visiblePhones[member.name]}</p>
+                        <div className="bg-primary/40 backdrop-blur-md border border-primary/50 rounded-lg py-2 px-3 text-center animate-in fade-in zoom-in-95 ring-1 ring-white/20">
+                          <p className="text-white text-sm font-bold tracking-wider drop-shadow-sm">{visiblePhones[member.name]}</p>
                         </div>
                       ) : (
                         <Button 
@@ -422,6 +497,23 @@ export default function HomePage() {
                   </div>
                 </div>
               ))}
+            </div>
+            
+            {/* Scroll Progress Indicator */}
+            <div className={`max-w-[200px] mx-auto mt-8 transition-opacity ${scrollState.isScrollable ? 'opacity-80 hover:opacity-100' : 'opacity-100'}`}>
+              <div className="flex items-center justify-center gap-2 text-[10px] text-muted-foreground mb-3 font-semibold uppercase tracking-widest">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M17 2v4"></path><path d="M17 18v4"></path><path d="M7 2v4"></path><path d="M7 18v4"></path><path d="M22 12H2"></path><path d="M18 8l4 4-4 4"></path><path d="M6 8L2 12l4 4"></path></svg>
+                <span>Scroll to explore</span>
+              </div>
+              <div className="h-1 w-full bg-secondary rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-primary rounded-full transition-all duration-150 ease-out"
+                  style={{ 
+                    width: '30%', 
+                    marginLeft: `${Math.max(0, Math.min(70, scrollProgress * 0.7))}%` 
+                  }}
+                />
+              </div>
             </div>
           </div>
           

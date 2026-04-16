@@ -3,6 +3,7 @@
 export const dynamic = 'force-dynamic'
 
 import { useEffect, useState } from 'react'
+import Image from 'next/image'
 import { Navbar } from '@/components/Navbar'
 import { supabase } from '@/lib/supabase'
 import { LoadingPage } from '@/components/ui/loading-page'
@@ -42,6 +43,48 @@ export default function AboutPage() {
           <p className="text-xl text-white/80 font-light leading-relaxed">
             Redefining the automotive ecosystem through technology, transparency, and a relentless pursuit of the perfect drive.
           </p>
+        </div>
+      </section>
+
+      {/* Executive Leadership */}
+      <section className="bg-background pt-24 pb-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-serif font-bold text-foreground mb-4">Executive Leadership</h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              The visionary minds steering Delta Car towards the future of automotive excellence.
+            </p>
+          </div>
+          <div className="flex flex-col md:flex-row justify-center gap-12">
+            {[
+              {
+                name: 'Donia Elsayed',
+                title: 'Chief Executive Officer',
+                image: '/images/C-suit/Donia Elsayed-Chief Executive Officer.jpeg'
+              },
+              {
+                name: 'Karim Mohamed',
+                title: 'Chief Operating Officer',
+                image: '/images/C-suit/Karim Mohamed-Chief Operating Officer.jpeg'
+              }
+            ].map((exec, i) => (
+              <div key={i} className="group relative overflow-hidden rounded-2xl bg-card border border-border shadow-sm hover:shadow-xl transition-all duration-500 w-full max-w-md mx-auto md:mx-0">
+                <div className="aspect-[4/5] relative overflow-hidden">
+                  <Image 
+                    src={exec.image} 
+                    alt={exec.name} 
+                    fill 
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity" />
+                </div>
+                <div className="absolute inset-x-0 bottom-0 p-8 text-center text-white">
+                  <h4 className="text-2xl font-serif font-bold mb-2">{exec.name}</h4>
+                  <p className="text-xs text-primary font-bold tracking-[0.2em] uppercase">{exec.title}</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
