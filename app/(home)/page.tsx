@@ -2,7 +2,7 @@
 
 export const dynamic = 'force-dynamic'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
@@ -15,6 +15,36 @@ export default function HomePage() {
   const [featuredListings, setFeaturedListings] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [activeSlide, setActiveSlide] = useState(0)
+  const [visiblePhones, setVisiblePhones] = useState<{ [key: string]: string }>({})
+  const scrollRef = useRef<HTMLDivElement>(null)
+
+  const teamMembers = [
+    { name: 'Doaa Yasser', image: '/images/Customer Service/Doaa Yasser.jpeg' },
+    { name: 'Donia Ahmed', image: '/images/Customer Service/Donia Ahmed.jpeg' },
+    { name: 'Donia Hassan', image: '/images/Customer Service/Donia Hassan.jpeg' },
+    { name: 'Noureen Emad', image: '/images/Customer Service/Noureen Emad.jpeg' },
+    { name: 'Shahd Wael', image: '/images/Customer Service/Shahd Wael.jpeg' },
+    { name: 'Zeinab Ahmed', image: '/images/Customer Service/Zeinab Ahmed.jpeg' },
+  ]
+
+  const generateRandomPhone = () => {
+    const randomDigits = Math.floor(10000000 + Math.random() * 90000000)
+    return `+20 1${Math.floor(Math.random() * 3)}${randomDigits}`
+  }
+
+  const handleContactClick = (name: string) => {
+    if (!visiblePhones[name]) {
+      setVisiblePhones(prev => ({ ...prev, [name]: generateRandomPhone() }))
+    }
+  }
+
+  const scroll = (direction: 'left' | 'right') => {
+    if (scrollRef.current) {
+      const { scrollLeft, clientWidth } = scrollRef.current
+      const scrollTo = direction === 'left' ? scrollLeft - clientWidth : scrollLeft + clientWidth
+      scrollRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' })
+    }
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -317,6 +347,93 @@ export default function HomePage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Customer Service Team */}
+      <section className="bg-background py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative group/section">
+          <div className="text-center mb-16">
+            <h3 className="text-4xl font-serif font-bold text-foreground mb-4">Our Customer Service Team</h3>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Meet our dedicated professionals ready to assist you with every step of your automotive journey.
+            </p>
+          </div>
+
+          <div className="relative">
+            {/* Scroll Navigation Arrows */}
+            <button 
+              onClick={() => scroll('left')}
+              className="absolute -left-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-background/80 backdrop-blur-md border border-border shadow-xl flex items-center justify-center text-foreground hover:bg-primary hover:text-white transition-all opacity-0 group-hover/section:opacity-100 hidden md:flex"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            </button>
+            
+            <button 
+              onClick={() => scroll('right')}
+              className="absolute -right-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-background/80 backdrop-blur-md border border-border shadow-xl flex items-center justify-center text-foreground hover:bg-primary hover:text-white transition-all opacity-0 group-hover/section:opacity-100 hidden md:flex"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+            </button>
+
+            <div 
+              ref={scrollRef}
+              className="flex overflow-x-auto gap-6 pb-12 snap-x snap-mandatory hide-scrollbar pt-4"
+            >
+              {teamMembers.map((member, i) => (
+                <div 
+                  key={i} 
+                  className="flex-none w-72 snap-center group relative overflow-hidden rounded-2xl bg-card border border-border shadow-sm hover:shadow-2xl transition-all duration-500"
+                >
+                  <div className="aspect-[4/5] relative overflow-hidden">
+                    <Image 
+                      src={member.image} 
+                      alt={member.name} 
+                      fill 
+                      className="object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity" />
+                  </div>
+                  
+                  {/* Content Container - Fixed bottom instead of absolute translation to avoid cropping */}
+                  <div className="absolute inset-x-0 bottom-0 p-5 pt-10 text-white">
+                    <h4 className="text-lg font-serif font-bold mb-0.5">{member.name}</h4>
+                    
+                    {/* Role text - animate this only */}
+                    <div className="overflow-hidden h-0 group-hover:h-5 transition-all duration-500">
+                      <p className="text-xs text-white/70">Support Specialist</p>
+                    </div>
+                    
+                    <div className="mt-4">
+                      {visiblePhones[member.name] ? (
+                        <div className="bg-primary/20 backdrop-blur-md border border-primary/30 rounded-lg py-2 px-3 text-center animate-in fade-in zoom-in-95">
+                          <p className="text-primary text-sm font-bold tracking-wider">{visiblePhones[member.name]}</p>
+                        </div>
+                      ) : (
+                        <Button 
+                          onClick={() => handleContactClick(member.name)}
+                          size="sm"
+                          className="w-full bg-primary hover:bg-primary/90 text-white border-none shadow-lg shadow-primary/20 text-xs font-bold"
+                        >
+                          Contact Support
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          <style jsx>{`
+            .hide-scrollbar::-webkit-scrollbar {
+              display: none;
+            }
+            .hide-scrollbar {
+              -ms-overflow-style: none; /* IE and Edge */
+              scrollbar-width: none; /* Firefox */
+            }
+          `}</style>
         </div>
       </section>
 
