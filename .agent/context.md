@@ -2,7 +2,7 @@
 # v0-delta-car-platform Context
 
 ## Project Summary
-A Next.js web app for a car platform (likely rentals/sales), featuring user auth, dashboards, listings, admin panels, maintenance requests, and services. Built with v0.dev for rapid UI prototyping, integrated with Supabase for auth/DB. Supports dark/light themes, responsive design, and admin CRUD operations.
+A Next.js web app for a car platform (likely rentals/sales), featuring user auth, dashboards, listings, admin panels, maintenance requests, and services. Integrated with Supabase for auth/DB. Supports dark/light themes, responsive design, and admin CRUD operations.
 
 ## Tech Stack
 - **Framework**: Next.js 16.2.0 (App Router, React 19.2.4)
@@ -60,7 +60,7 @@ A Next.js web app for a car platform (likely rentals/sales), featuring user auth
   function onSubmit(data) { createServerAction(data); }
   ```
 - **Bug Fix**: `npm run lint`, check console/Supabase logs, dev server auto-reloads.
-- **Deploy**: Push to main (v0 auto-deploys Vercel).
+- **Deploy**: Push to main (deploys to Vercel).
 
 ## Testing
 - No E2E/unit tests configured (no Jest/Vitest). Add via `npm i -D vitest @testing-library/react`.
@@ -69,7 +69,6 @@ A Next.js web app for a car platform (likely rentals/sales), featuring user auth
 
 ## Important Notes
 - **Env**: Set `NEXT_PUBLIC_SUPABASE_URL/ANON_KEY` in `.env.local`. Restart dev server.
-- **v0.dev**: Edits via [v0 link](https://v0.app/chat/projects/prj_ymaQA3JB8UxA0sSwtsizIJ8UmnES) push commits.
 - **Tailwind 4**: Uses `@tailwindcss/postcss7-8` compat; no JIT issues.
 - **Supabase**: Row Level Security (RLS) assumed; check `scripts/init-db.sql`.
 - **Gotchas**: React 19 strict mode; no `use client` unless interactive. Admin routes need role checks. Placeholders in `public/` for images.
