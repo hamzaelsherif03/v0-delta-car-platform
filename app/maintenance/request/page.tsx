@@ -113,13 +113,31 @@ function MaintenanceForm() {
       return
     }
 
+    if (!formData.preferred_date) {
+      setError('Please select a preferred date.')
+      setIsSubmitting(false)
+      return
+    }
+
+    if (!formData.preferred_time) {
+      setError('Please select a preferred time.')
+      setIsSubmitting(false)
+      return
+    }
+
+    if (!formData.description.trim()) {
+      setError('Please describe the service you need.')
+      setIsSubmitting(false)
+      return
+    }
+
     try {
       const payload: any = {
         service_type: formData.service_type,
         contact_name: formData.contact_name,
         description: formData.description,
-        preferred_date: formData.preferred_date || null,
-        preferred_time: formData.preferred_time || null,
+        preferred_date: formData.preferred_date,
+        preferred_time: formData.preferred_time,
         contact_phone: formData.contact_phone,
         status: 'pending',
       }
@@ -288,34 +306,37 @@ function MaintenanceForm() {
 
                 <div className="grid md:grid-cols-2 gap-5">
                   <div className="space-y-2">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Preferred Date</label>
+                    <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Preferred Date *</label>
                     <Input
                       type="date"
                       value={formData.preferred_date}
                       onChange={(e) => setFormData({ ...formData, preferred_date: e.target.value })}
                       className="bg-background/50 border-border/60 hover:border-primary/50 focus:border-primary transition-colors h-11"
+                      required
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Preferred Time</label>
+                    <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Preferred Time *</label>
                     <Input
                       type="time"
                       value={formData.preferred_time}
                       onChange={(e) => setFormData({ ...formData, preferred_time: e.target.value })}
                       className="bg-background/50 border-border/60 hover:border-primary/50 focus:border-primary transition-colors h-11"
+                      required
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Additional Context</label>
+                  <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Additional Context *</label>
                   <textarea
                     placeholder="Describe specific symptoms, requirements, or provide vin number..."
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     rows={4}
                     className="w-full px-4 py-3 border border-border/60 rounded-md text-sm resize-none bg-background/50 hover:border-primary/50 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors block"
+                    required
                   />
                 </div>
               </div>
