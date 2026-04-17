@@ -45,6 +45,7 @@ function MaintenanceForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
   const [user, setUser] = useState<any>(null)
+  const [submitSuccess, setSubmitSuccess] = useState(false)
 
   const [formData, setFormData] = useState({
     service_type: '',
@@ -134,7 +135,13 @@ function MaintenanceForm() {
 
       if (insertError) throw insertError
 
-      router.push('/maintenance?success=true')
+      if (user?.id) {
+        // Logged-in users go to their maintenance dashboard
+        router.push('/maintenance?success=true')
+      } else {
+        // Guests see an inline success message
+        setSubmitSuccess(true)
+      }
     } catch (err: any) {
       console.error(err)
       setError(err.message || 'An error occurred while submitting your request.')
@@ -144,6 +151,27 @@ function MaintenanceForm() {
 
   if (loading) {
     return <LoadingPage message="Calibrating interface..." />
+  }
+
+  if (submitSuccess) {
+    return (
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32 relative z-10 text-center">
+        <div className="mb-8 inline-flex items-center justify-center w-20 h-20 rounded-full bg-green-500/10 border-2 border-green-500/30">
+          <CheckCircle2 className="w-10 h-10 text-green-500" />
+        </div>
+        <h1 className="text-3xl md:text-4xl font-serif font-bold text-foreground mb-4">Request Submitted</h1>
+        <p className="text-muted-foreground text-lg mb-3 max-w-lg mx-auto">
+          Thank you, <span className="text-foreground font-semibold">{formData.contact_name}</span>. Your <span className="text-primary font-semibold">{formData.service_type}</span> request has been received.
+        </p>
+        <p className="text-muted-foreground text-sm mb-10 max-w-md mx-auto">
+          Our concierge team will contact you at <span className="font-semibold text-foreground">{formData.contact_phone}</span> to confirm your booking.
+        </p>
+        <div className="flex gap-4 justify-center">
+          <Button variant="outline" onClick={() => router.push('/services')} className="h-12 px-6">Back to Services</Button>
+          <Button onClick={() => { setSubmitSuccess(false); setFormData({ service_type: '', contact_name: '', description: '', preferred_date: '', preferred_time: '', contact_phone: '' }) }} className="h-12 px-6">Book Another Service</Button>
+        </div>
+      </div>
+    )
   }
 
   return (
