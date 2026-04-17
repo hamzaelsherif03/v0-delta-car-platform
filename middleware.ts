@@ -55,7 +55,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Protect designated standard routes
-  const protectedPaths = ['/dashboard', '/listings/create', '/settings/profile', '/maintenance/request']
+  const protectedPaths = ['/dashboard', '/listings/create', '/settings/profile']
   
   const isProtectedPath = protectedPaths.some((path) => request.nextUrl.pathname.startsWith(path)) || 
                           (request.nextUrl.pathname.startsWith('/listings') && request.nextUrl.pathname.endsWith('/edit'))

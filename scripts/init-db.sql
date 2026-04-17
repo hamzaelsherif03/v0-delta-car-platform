@@ -40,7 +40,8 @@ CREATE TABLE IF NOT EXISTS public.listings (
 -- Maintenance Requests table
 CREATE TABLE IF NOT EXISTS public.maintenance_requests (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
+  user_id UUID REFERENCES public.users(id) ON DELETE CASCADE,
+  contact_name TEXT,
   service_type TEXT NOT NULL,
   description TEXT,
   preferred_date DATE,
@@ -87,7 +88,7 @@ CREATE POLICY "Sellers can delete their own listings" ON public.listings FOR DEL
 
 -- RLS Policies for maintenance requests table
 CREATE POLICY "Users can view their own maintenance requests" ON public.maintenance_requests FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "Users can create maintenance requests" ON public.maintenance_requests FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Anyone can create maintenance requests" ON public.maintenance_requests FOR INSERT WITH CHECK (true);
 CREATE POLICY "Users can update their own maintenance requests" ON public.maintenance_requests FOR UPDATE USING (auth.uid() = user_id);
 
 -- RLS Policies for favorites table
