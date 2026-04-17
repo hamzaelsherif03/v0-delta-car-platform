@@ -30,7 +30,7 @@ export default async function AdminLayout({
           </Button>
           <div className="pt-4 pb-2">
             <p className="px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-              Management
+              Operations
             </p>
           </div>
           <Button variant="ghost" className="w-full justify-start" asChild>

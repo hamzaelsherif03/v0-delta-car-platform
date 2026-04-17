@@ -107,8 +107,8 @@ export default function AdminMaintenancePage() {
                 <div className="space-y-1 md:w-1/3 text-sm">
                   <div className="flex flex-col">
                     <span className="text-muted-foreground text-xs uppercase tracking-wider">Client</span>
-                    <span className="font-medium">{req.users?.full_name || 'Anonymous User'}</span>
-                    <span className="text-muted-foreground">{req.users?.email}</span>
+                    <span className="font-medium">{req.users?.full_name || req.contact_name || 'Anonymous User'}</span>
+                    <span className="text-muted-foreground">{req.users?.email || (req.user_id ? '' : 'Guest Booking')}</span>
                   </div>
                   <div className="mt-2 flex gap-4">
                     <div>
