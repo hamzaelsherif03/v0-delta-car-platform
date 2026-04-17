@@ -1,0 +1,59 @@
+{
+  "generator": "codesummary",
+  "version": "1.0.0",
+  "model": "grok-4-1-fast-reasoning",
+  "timestamp": "2026-04-17T12:15:05.597Z",
+  "analysis": {
+    "projectName": "v0-delta-car-platform",
+    "description": "A Next.js web application for a car platform with user authentication, listings management, admin dashboard, maintenance requests, services, and profile settings, built with Supabase backend.",
+    "techStack": [
+      "Next.js",
+      "React",
+      "TypeScript",
+      "Supabase",
+      "Tailwind CSS",
+      "Radix UI",
+      "Zod",
+      "React Hook Form",
+      "Next Themes"
+    ],
+    "mainComponents": [
+      "Navbar.tsx",
+      "Footer.tsx",
+      "ThemeProvider.tsx",
+      "ui components (Shadcn/UI)"
+    ],
+    "hasDatabase": true,
+    "hasApi": false,
+    "keyFiles": [
+      "package.json",
+      "README.md",
+      "app/layout.tsx",
+      "lib/supabase.ts",
+      "middleware.ts",
+      "components.json"
+    ],
+    "entryPoints": [
+      "app/layout.tsx",
+      "app/page.tsx"
+    ],
+    "buildSystem": "npm/yarn/pnpm"
+  },
+  "files": {
+    "docs": [
+      "ARCHITECTURE.md",
+      "API.md",
+      "DATABASE.md",
+      "SETUP.md",
+      "README.md"
+    ],
+    "agent": [
+      "context.md",
+      "codebase-overview.md"
+    ]
+  },
+  "usage": {
+    "inputTokens": 16464,
+    "outputTokens": 9250
+  }
+}
