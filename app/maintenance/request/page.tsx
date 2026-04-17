@@ -311,7 +311,8 @@ function MaintenanceForm() {
                       type="date"
                       value={formData.preferred_date}
                       onChange={(e) => setFormData({ ...formData, preferred_date: e.target.value })}
-                      className="bg-background/50 border-border/60 hover:border-primary/50 focus:border-primary transition-colors h-11"
+                      onClick={(e) => (e.target as HTMLInputElement).showPicker?.()}
+                      className="bg-background/50 border-border/60 hover:border-primary/50 focus:border-primary transition-colors h-11 cursor-pointer"
                       required
                     />
                   </div>
@@ -322,7 +323,8 @@ function MaintenanceForm() {
                       type="time"
                       value={formData.preferred_time}
                       onChange={(e) => setFormData({ ...formData, preferred_time: e.target.value })}
-                      className="bg-background/50 border-border/60 hover:border-primary/50 focus:border-primary transition-colors h-11"
+                      onClick={(e) => (e.target as HTMLInputElement).showPicker?.()}
+                      className="bg-background/50 border-border/60 hover:border-primary/50 focus:border-primary transition-colors h-11 cursor-pointer"
                       required
                     />
                   </div>
