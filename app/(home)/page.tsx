@@ -9,8 +9,10 @@ import { Button } from '@/components/ui/button'
 import { supabase } from '@/lib/supabase'
 import { Navbar } from '@/components/Navbar'
 import { LoadingPage } from '@/components/ui/loading-page'
+import { useTranslation } from '@/lib/useTranslation'
 
 export default function HomePage() {
+  const { t, locale } = useTranslation()
   const [user, setUser] = useState<any>(null)
   const [featuredListings, setFeaturedListings] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
@@ -149,24 +151,27 @@ export default function HomePage() {
 
       {/* Hero Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
-          <div>
+        <div className="grid md:grid-cols-2 gap-12 items-center rtl:flex-row-reverse">
+          <div className="rtl:text-right">
             <h2 className="text-[3.375rem] font-serif font-bold text-foreground leading-tight mb-6">
-              Where Engineering <br />
-              <span className="text-primary italic">Meets Elegance.</span>
+              {locale === 'ar' ? (
+                <>حيث تلتقي الهندسة <br /> <span className="text-primary italic">بالأناقة.</span></>
+              ) : (
+                <>Where Engineering <br /> <span className="text-primary italic">Meets Elegance.</span></>
+              )}
             </h2>
             <p className="text-base text-muted-foreground/90 mb-8 leading-relaxed max-w-lg font-light">
-              Delta Car is more than a marketplace; it is an ecosystem of automotive passion. Discover an elite fleet of vehicles designed for those who demand a superior journey.
+              {t('hero.subheadline')}
             </p>
-            <div className="flex gap-4">
-              <Link href="/listings?type=sale">
+            <div className="flex gap-4 rtl:flex-row-reverse">
+              <Link href={locale === 'ar' ? '/ar/listings?type=sale' : '/listings?type=sale'}>
                 <Button size="lg" className="bg-primary hover:bg-primary/90">
-                  Browse Cars
+                  {t('hero.browseCars')}
                 </Button>
               </Link>
-              <Link href="/listings/create">
+              <Link href={locale === 'ar' ? '/ar/listings/create' : '/listings/create'}>
                 <Button size="lg" variant="outline">
-                  Sell Your Car
+                  {t('hero.sellCar')}
                 </Button>
               </Link>
             </div>
@@ -253,19 +258,19 @@ export default function HomePage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
               <p className="text-3xl font-serif font-bold text-primary">5k+</p>
-              <p className="text-xs uppercase tracking-widest text-muted-foreground mt-1">Active Listings</p>
+              <p className="text-xs uppercase tracking-widest text-muted-foreground mt-1">{t('scale.activeListings')}</p>
             </div>
             <div>
               <p className="text-3xl font-serif font-bold text-primary">12k+</p>
-              <p className="text-xs uppercase tracking-widest text-muted-foreground mt-1">Global Users</p>
+              <p className="text-xs uppercase tracking-widest text-muted-foreground mt-1">{t('scale.globalUsers')}</p>
             </div>
             <div>
               <p className="text-3xl font-serif font-bold text-primary">15min</p>
-              <p className="text-xs uppercase tracking-widest text-muted-foreground mt-1">Avg Response</p>
+              <p className="text-xs uppercase tracking-widest text-muted-foreground mt-1">{t('scale.avgResponse')}</p>
             </div>
             <div>
               <p className="text-3xl font-serif font-bold text-primary">99%</p>
-              <p className="text-xs uppercase tracking-widest text-muted-foreground mt-1">Safety Rating</p>
+              <p className="text-xs uppercase tracking-widest text-muted-foreground mt-1">{t('scale.safetyRating')}</p>
             </div>
           </div>
         </div>
@@ -273,13 +278,13 @@ export default function HomePage() {
 
       {/* Lifestyle Categories */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
-          <div>
-            <h3 className="text-2xl font-serif font-bold text-foreground">Explore by Lifestyle</h3>
-            <p className="text-sm text-muted-foreground mt-1">Find the perfect match for your driving philosophy.</p>
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4 rtl:flex-row-reverse">
+          <div className="rtl:text-right">
+            <h3 className="text-2xl font-serif font-bold text-foreground">{t('lifestyle.title')}</h3>
+            <p className="text-sm text-muted-foreground mt-1">{t('lifestyle.subtitle')}</p>
           </div>
-          <Link href="/listings" className="text-primary text-sm font-medium hover:underline flex items-center gap-2">
-            View full inventory <span>→</span>
+          <Link href={locale === 'ar' ? '/ar/listings' : '/listings'} className="text-primary text-sm font-medium hover:underline flex items-center gap-2 rtl:flex-row-reverse">
+            {t('lifestyle.viewFull')} <span>→</span>
           </Link>
         </div>
 
@@ -294,8 +299,8 @@ export default function HomePage() {
             <Link key={i} href={`/listings?category=${cat.name}`} className="group relative h-64 rounded-xl overflow-hidden border border-border shadow-sm hover:shadow-lg transition-all duration-300">
               <Image src={cat.image} alt={cat.name} fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-              <div className="absolute bottom-4 left-4 text-white">
-                <p className="text-[10px] uppercase tracking-widest opacity-80 mb-0.5">{cat.count} Units</p>
+              <div className="absolute bottom-4 left-4 text-white rtl:right-4 rtl:left-auto">
+                <p className="text-[10px] uppercase tracking-widest opacity-80 mb-0.5">{cat.count} {t('lifestyle.units')}</p>
                 <h4 className="text-lg font-serif font-bold">{cat.name}</h4>
               </div>
             </Link>
@@ -306,22 +311,22 @@ export default function HomePage() {
       {/* Features Section */}
       <section className="bg-card border-y border-border py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h3 className="text-3xl font-serif font-bold text-foreground mb-12 text-center">
-            Everything You Need
+          <h3 className="text-3xl font-serif font-bold text-foreground mb-12 text-center rtl:text-right">
+            {t('features.title')}
           </h3>
           <div className="grid md:grid-cols-3 gap-8">
             {[
               {
-                title: 'Buy & Sell',
-                description: 'Find your dream car or sell yours with detailed listings and secure transactions.',
+                title: t('features.buySell'),
+                description: t('features.buySellDesc'),
               },
               {
-                title: 'Rent Vehicles',
-                description: 'Daily rental options for short-term needs with transparent pricing.',
+                title: t('features.rentVehicles'),
+                description: t('features.rentVehiclesDesc'),
               },
               {
-                title: 'Maintenance Services',
-                description: 'Connect with trusted service providers for all your vehicle needs.',
+                title: t('features.maintenance'),
+                description: t('features.maintenanceDesc'),
               },
             ].map((feature, i) => (
               <div key={i} className="p-6 rounded-lg bg-background border border-border">
@@ -338,28 +343,31 @@ export default function HomePage() {
       {/* Service Spotlight */}
       <section className="bg-background py-24 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col lg:flex-row items-center gap-16">
-            <div className="lg:w-1/2 space-y-6">
-              <h3 className="text-4xl font-serif font-bold text-foreground">Beyond the Sale: <br /><span className="text-primary italic">Precision Care</span></h3>
+          <div className="flex flex-col lg:flex-row items-center gap-16 rtl:flex-row-reverse">
+            <div className="lg:w-1/2 space-y-6 rtl:text-right">
+              <h3 className="text-4xl font-serif font-bold text-foreground">
+                {locale === 'ar' ? 'ما وراء البيع: ' : 'Beyond the Sale: '}<br />
+                <span className="text-primary italic">{locale === 'ar' ? 'العناية الدقيقة' : 'Precision Care'}</span>
+              </h3>
               <p className="text-lg text-muted-foreground leading-relaxed">
-                Delta Car isn't just about discovery. We ensure your vehicle maintains its peak engineering through our elite network of specialized technicians.
+                {t('services.description')}
               </p>
-              <ul className="space-y-4">
+              <ul className="space-y-4 rtl:text-right">
                 {[
-                  'Certified Multi-Point Inspections',
-                  'Performance Tuning & Optimization',
-                  'Nationwide Concierge Transport',
-                  'Strategic Maintenance Scheduling'
+                  t('services.inspections'),
+                  t('services.tuning'),
+                  t('services.transport'),
+                  t('services.scheduling')
                 ].map((item, i) => (
-                  <li key={i} className="flex items-center gap-3">
-                    <div className="h-2 w-2 rounded-full bg-primary" />
+                  <li key={i} className="flex items-center gap-3 rtl:flex-row-reverse">
+                    <div className="h-2 w-2 rounded-full bg-primary flex-shrink-0" />
                     <span className="font-medium">{item}</span>
                   </li>
                 ))}
               </ul>
               <div className="pt-4">
-                <Link href="/services">
-                  <Button variant="outline" size="lg">Explore Concierge Services</Button>
+                <Link href={locale === 'ar' ? '/ar/services' : '/services'}>
+                  <Button variant="outline" size="lg">{t('services.explore')}</Button>
                 </Link>
               </div>
             </div>
