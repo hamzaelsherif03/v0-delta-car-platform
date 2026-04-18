@@ -1,0 +1,143 @@
+{
+  "nav": {
+    "inventory": "Inventory",
+    "services": "Services",
+    "howItWorks": "How It Works",
+    "about": "About",
+    "support": "Support",
+    "signIn": "Sign In",
+    "getStarted": "Get Started",
+    "signOut": "Sign Out",
+    "dashboard": "Dashboard"
+  },
+  "hero": {
+    "headline": "Where Engineering Meets Elegance.",
+    "subheadline": "Delta Car is more than a marketplace; it is an ecosystem of automotive passion. Discover an elite fleet of vehicles designed for those who demand a superior journey.",
+    "browseCars": "Browse Cars",
+    "sellCar": "Sell Your Car"
+  },
+  "scale": {
+    "activeListings": "Active Listings",
+    "globalUsers": "Global Users",
+    "avgResponse": "Avg Response",
+    "safetyRating": "Safety Rating"
+  },
+  "lifestyle": {
+    "title": "Explore by Lifestyle",
+    "subtitle": "Find the perfect match for your driving philosophy.",
+    "viewFull": "View full inventory",
+    "units": "Units"
+  },
+  "features": {
+    "title": "Everything You Need",
+    "buySell": "Buy & Sell",
+    "buySellDesc": "Find your dream car or sell yours with detailed listings and secure transactions.",
+    "rentVehicles": "Rent Vehicles",
+    "rentVehiclesDesc": "Daily rental options for short-term needs with transparent pricing.",
+    "maintenance": "Maintenance Services",
+    "maintenanceDesc": "Connect with trusted service providers for all your vehicle needs."
+  },
+  "services": {
+    "title": "Beyond the Sale: Precision Care",
+    "description": "Delta Car isn't just about discovery. We ensure your vehicle maintains its peak engineering through our elite network of specialized technicians.",
+    "inspections": "Certified Multi-Point Inspections",
+    "tuning": "Performance Tuning & Optimization",
+    "transport": "Nationwide Concierge Transport",
+    "scheduling": "Strategic Maintenance Scheduling",
+    "explore": "Explore Concierge Services",
+    "precisionMaintenance": "Precision Maintenance",
+    "precisionMaintenanceDesc": "Specialized servicing from performance tuning to routine oil changes using grade-A synthetic lubricants.",
+    "eliteInspection": "Elite Inspection",
+    "eliteInspectionDesc": "Our proprietary 250-point technical audit ensures your vehicle meets Delta standards of excellence.",
+    "secureTransport": "Secure Transport",
+    "secureTransportDesc": "Enclosed, climate-controlled logistics for high-value assets. Nationwide door-to-door concierge.",
+    "masterDetailing": "Master Detailing",
+    "masterDetailingDesc": "Ceramic coating, paint correction, and interior restoration using biologically neutral formulations."
+  },
+  "testimonials": {
+    "title": "The Delta Experience",
+    "quote1": "The inspection service gave me total peace of mind when buying my 911. The detail was unmatched.",
+    "author1": "Amr M.",
+    "role1": "Collector",
+    "quote2": "Sold my G-Wagon in 4 days. The reach of this platform is incredible compared to standard local listings.",
+    "author2": "Noha S.",
+    "role2": "Private Seller",
+    "quote3": "Finally, a platform that understands what car enthusiasts actually need. The UI is a dream to use.",
+    "author3": "Ahmed K.",
+    "role3": "Enthusiast"
+  },
+  "ready": {
+    "title": "Ready to list your car?",
+    "subtitle": "Market your vehicle to thousands of seekers. Fast, easy, and secure.",
+    "button": "Create a Listing"
+  },
+  "about": {
+    "heroTitle": "Driven by Excellence.",
+    "heroSubtitle": "Redefining the automotive ecosystem through technology, transparency, and a relentless pursuit of the perfect drive.",
+    "leadership": "Executive Leadership",
+    "leadershipDesc": "The visionary minds steering Delta Car towards the future of automotive excellence.",
+    "mission": "The Delta Mission",
+    "missionDesc": "Delta Car was born from a simple realization: the traditional automotive marketplace was fractured. Enthusiasts struggled to find precision-matched vehicles, sellers faced opaque processes, and maintenance was often a leap of faith.",
+    "missionDesc2": "We built Delta to be the ultimate nexus. A place where hardware meets high-performance software, providing a seamless experience from the first search to the final delivery and every maintenance interval in between."
+  },
+  "auth": {
+    "signIn": "Sign In to Delta Car",
+    "signInDesc": "Enter your credentials to access your account",
+    "email": "Email",
+    "emailPlaceholder": "you@example.com",
+    "password": "Password",
+    "passwordPlaceholder": "••••••••",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have an account?",
+    "signUp": "Sign up",
+    "signUpTitle": "Create Your Delta Car Account",
+    "signUpDesc": "Join thousands of automotive enthusiasts",
+    "name": "Full Name",
+    "namePlaceholder": "John Doe",
+    "confirmPassword": "Confirm Password",
+    "confirmPasswordPlaceholder": "••••••••",
+    "iAgree": "I agree to the",
+    "termsOfService": "Terms of Service",
+    "and": "and",
+    "privacyPolicy": "Privacy Policy",
+    "alreadyHave": "Already have an account?",
+    "forgotPasswordTitle": "Reset Your Password",
+    "forgotPasswordDesc": "Enter your email and we'll send you a reset link",
+    "sendReset": "Send Reset Link",
+    "updatePasswordTitle": "Update Your Password",
+    "updatePasswordDesc": "Create a new password for your account",
+    "newPassword": "New Password",
+    "newPasswordPlaceholder": "••••••••",
+    "updatePassword": "Update Password"
+  },
+  "dashboard": {
+    "welcome": "Welcome to Your Dashboard",
+    "myListings": "My Listings",
+    "createListing": "Create Listing",
+    "myProfile": "My Profile",
+    "settings": "Settings"
+  },
+  "listings": {
+    "title": "Browse Listings",
+    "filter": "Filter",
+    "search": "Search vehicles...",
+    "forSale": "For Sale",
+    "forRent": "For Rent",
+    "viewDetails": "View Details",
+    "noListings": "No listings found",
+    "createOne": "Create one"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "close": "Close",
+    "viewMore": "View More",
+    "noImageAvailable": "No Image Available"
+  }
+}
