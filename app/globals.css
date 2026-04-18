@@ -78,6 +78,7 @@
   --font-sans: 'Geist', 'Geist Fallback';
   --font-serif: 'Merriweather', serif;
   --font-playfair: var(--font-playfair), serif;
+  --font-cairo: var(--font-cairo), sans-serif;
   --font-mono: 'Geist Mono', 'Geist Mono Fallback';
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -121,6 +122,12 @@
   html {
     font-size: 90% !important;
   }
+  
+  /* Arabic font for RTL pages */
+  html[lang="ar"] {
+    @apply font-cairo;
+  }
+  
   * {
     @apply border-border outline-ring/50;
   }
